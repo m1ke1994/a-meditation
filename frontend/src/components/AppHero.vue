@@ -14,15 +14,12 @@ const heroPhrases = [
 
 const heroRef = ref(null)
 const videoRef = ref(null)
-const shouldLoadVideo = ref(false)
 const activePhraseIndex = ref(0)
 
 let observer
 let phraseInterval
 
 const loadVideo = () => {
-  shouldLoadVideo.value = true
-
   requestAnimationFrame(() => {
     videoRef.value?.load()
     videoRef.value?.play().catch(() => {})
@@ -87,12 +84,12 @@ onUnmounted(() => {
       loop
       muted
       playsinline
+      webkit-playsinline
       preload="auto"
       :poster="heroPosterUrl"
       aria-hidden="true"
     >
       <source
-        v-if="shouldLoadVideo"
         :src="heroVideoUrl"
         type="video/mp4"
       >
