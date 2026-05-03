@@ -2,7 +2,6 @@
 import { onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
 
 const heroPosterUrl = '/images/Lila_Olga_2.2.poster.jpg'
-const heroVideoUrl = '/images/Lila_Olga_2.2_compressed.mp4'
 
 const heroPhrases = [
   'Игра, которая помогает услышать себя',
@@ -89,10 +88,7 @@ onUnmounted(() => {
       :poster="heroPosterUrl"
       aria-hidden="true"
     >
-      <source
-        :src="heroVideoUrl"
-        type="video/mp4"
-      >
+      <source src="/images/Lila_Olga_2.2_compressed.mp4" type="video/mp4">
     </video>
 
     <div class="absolute inset-0 -z-10 bg-black/45" />
