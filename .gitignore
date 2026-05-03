@@ -7,6 +7,7 @@
 # Project media
 frontend/src/public/images/*.mp4
 frontend/public/images/*.mp4
+!frontend/public/images/Lila_Olga_2.2_compressed.mp4
 
 # Node
 node_modules/
