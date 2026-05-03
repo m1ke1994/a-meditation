@@ -1,5 +1,5 @@
 # Video files (avoid GitHub 100MB push limit)
-*.mp4
+
 *.mov
 *.avi
 *.mkv
