@@ -1,18 +1,21 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { serviceGroups } from '../data/services'
+import ServiceOrderModal from './ServiceOrderModal.vue'
 
 const activeGroupId = ref(serviceGroups[0].id)
+const selectedService = ref(null)
 
 const activeGroup = computed(() => (
   serviceGroups.find((group) => group.id === activeGroupId.value) || serviceGroups[0]
 ))
 
-const scrollToContacts = () => {
-  document.getElementById('contacts')?.scrollIntoView({
-    behavior: 'smooth',
-    block: 'start',
-  })
+const openOrderModal = (service) => {
+  selectedService.value = service
+}
+
+const closeOrderModal = () => {
+  selectedService.value = null
 }
 </script>
 
@@ -196,6 +199,10 @@ const scrollToContacts = () => {
               {{ item.price }}
             </p>
 
+            <p class="mt-1 text-sm leading-6 text-stone-500">
+              {{ item.duration }}
+            </p>
+
             <p class="mt-5 flex-1 text-sm leading-6 text-stone-600">
               {{ item.text }}
             </p>
@@ -203,7 +210,7 @@ const scrollToContacts = () => {
             <button
               type="button"
               class="mt-6 rounded-full border border-[#1E7D8B]/25 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#1E7D8B] transition duration-300 hover:border-[#0C5865] hover:bg-[#0C5865] hover:text-white"
-              @click="scrollToContacts"
+              @click="openOrderModal(item)"
             >
               Записаться
             </button>
@@ -211,5 +218,10 @@ const scrollToContacts = () => {
         </div>
       </Transition>
     </div>
+
+    <ServiceOrderModal
+      :service="selectedService"
+      @close="closeOrderModal"
+    />
   </section>
 </template>
