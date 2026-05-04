@@ -13,7 +13,7 @@ const leftMenuItems = [
   { label: 'ОТЗЫВЫ', targetId: 'reviews' },
 ]
 const rightMenuItems = [
-  { label: 'ЗАПИСАТЬСЯ', targetId: 'contacts' },
+  { label: 'МЕДИТАЦИИ', targetId: 'meditations' },
   { label: 'СТОИМОСТЬ', targetId: 'pricing' },
   { label: 'КОНТАКТЫ', targetId: 'contacts' },
 ]
