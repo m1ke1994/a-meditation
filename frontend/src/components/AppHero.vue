@@ -92,9 +92,9 @@ onUnmounted(() => {
       <source :src="heroVideoUrl" type="video/mp4">
     </video>
 
-    <div class="absolute inset-0 -z-10 bg-black/45" />
-    <div class="absolute inset-0 -z-10 bg-gradient-to-r from-black/75 via-black/40 to-black/25" />
-    <div class="absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-t from-zinc-950/70 to-transparent" />
+    <div class="absolute inset-0 -z-10 bg-black/10" />
+    <div class="absolute inset-0 -z-10 bg-gradient-to-r from-black/40 via-black/12 to-white/18" />
+    <div class="absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-t from-zinc-950/24 to-transparent" />
 
     <div class="mx-auto w-full max-w-[1280px] px-6 py-20 md:px-8">
       <div class="max-w-[760px]">

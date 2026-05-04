@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 const form = ref({
   name: '',
@@ -9,9 +9,118 @@ const form = ref({
   agree: true,
 })
 
+const locations = [
+  {
+    title: 'Парк Горького',
+    address: 'Москва, ул. Крымский Вал, 9',
+    lat: 55.7298,
+    lng: 37.6011,
+  },
+  {
+    title: 'Патриаршие пруды',
+    address: 'Москва, Патриаршие пруды',
+    lat: 55.7636,
+    lng: 37.5906,
+  },
+  {
+    title: 'ВДНХ',
+    address: 'Москва, проспект Мира, 119',
+    lat: 55.8298,
+    lng: 37.6328,
+  },
+  {
+    title: 'Третьяковская галерея',
+    address: 'Москва, Лаврушинский пер., 10',
+    lat: 55.7414,
+    lng: 37.6208,
+  },
+]
+
+const mapRef = ref(null)
+const mapStatus = ref('loading')
+
+let yandexMap
+
+const loadYandexMaps = () => new Promise((resolve, reject) => {
+  if (window.ymaps) {
+    window.ymaps.ready(() => resolve(window.ymaps))
+    return
+  }
+
+  const existingScript = document.getElementById('yandex-maps-api')
+
+  if (existingScript) {
+    existingScript.addEventListener('load', () => window.ymaps.ready(() => resolve(window.ymaps)), { once: true })
+    existingScript.addEventListener('error', reject, { once: true })
+    return
+  }
+
+  const script = document.createElement('script')
+  script.id = 'yandex-maps-api'
+  script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU'
+  script.async = true
+  script.onload = () => window.ymaps.ready(() => resolve(window.ymaps))
+  script.onerror = reject
+  document.head.appendChild(script)
+})
+
+const initMap = async () => {
+  if (!mapRef.value) return
+
+  try {
+    const ymaps = await loadYandexMaps()
+
+    yandexMap = new ymaps.Map(mapRef.value, {
+      center: [55.76, 37.61],
+      zoom: 11,
+      controls: ['zoomControl'],
+    })
+
+    const coordinates = locations.map((location) => [location.lat, location.lng])
+
+    locations.forEach((location) => {
+      const placemark = new ymaps.Placemark(
+        [location.lat, location.lng],
+        {
+          balloonContentHeader: location.title,
+          balloonContentBody: location.address,
+          hintContent: location.title,
+        },
+        {
+          preset: 'islands#darkGreenDotIconWithCaption',
+          iconCaption: location.title,
+        },
+      )
+
+      yandexMap.geoObjects.add(placemark)
+    })
+
+    yandexMap.setBounds(
+      ymaps.util.bounds.fromPoints(coordinates),
+      {
+        checkZoomRange: true,
+        zoomMargin: [42, 42, 42, 42],
+      },
+    )
+
+    mapStatus.value = 'ready'
+  } catch (error) {
+    console.warn('Не удалось загрузить Яндекс.Карты', error)
+    mapStatus.value = 'error'
+  }
+}
+
 function submitForm() {
   console.log('Contact form:', form.value)
 }
+
+onMounted(() => {
+  initMap()
+})
+
+onBeforeUnmount(() => {
+  yandexMap?.destroy()
+})
 </script>
 
 <template>
@@ -122,15 +231,41 @@ function submitForm() {
                 индивидуально, парами или в группе
               </p>
             </div>
+
+            <div class="mt-6 grid gap-2 sm:grid-cols-2">
+              <div
+                v-for="location in locations"
+                :key="location.title"
+                class="rounded-2xl border border-black/10 bg-[#fbfaf7] px-4 py-3"
+              >
+                <p class="text-sm font-semibold text-[#20201d]">
+                  {{ location.title }}
+                </p>
+                <p class="mt-1 text-xs leading-5 text-stone-500">
+                  {{ location.address }}
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div class="h-[360px] w-full">
-            <iframe
-              title="Карта"
-              src="https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755864&z=12"
-              class="h-full w-full border-0"
-              loading="lazy"
+          <div class="relative h-[360px] w-full overflow-hidden bg-[#f5f2ed]">
+            <div
+              ref="mapRef"
+              class="h-full w-full"
+              aria-label="Карта с местами проведения"
             />
+
+            <div
+              v-if="mapStatus !== 'ready'"
+              class="absolute inset-0 flex items-center justify-center bg-[#f5f2ed] px-6 text-center text-sm text-stone-500"
+            >
+              <span v-if="mapStatus === 'loading'">
+                Загрузка карты...
+              </span>
+              <span v-else>
+                Не удалось загрузить карту. Адреса указаны выше.
+              </span>
+            </div>
           </div>
         </div>
 
