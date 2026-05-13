@@ -137,7 +137,7 @@ onBeforeUnmount(() => {
     >
       <div
         v-if="isOpen"
-        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 px-4 py-4 backdrop-blur-sm sm:px-6"
+        class="fixed inset-0 z-[999] flex items-center justify-center bg-black/75 p-4 backdrop-blur-md sm:p-6"
         @click.self="closeModal"
       >
         <Transition
@@ -155,11 +155,11 @@ onBeforeUnmount(() => {
             role="dialog"
             aria-modal="true"
             aria-labelledby="service-order-title"
-            class="relative w-full max-w-[520px] rounded-[2rem] border border-white/60 bg-[#FBF7EF] p-5 text-[#24231F] shadow-[0_32px_100px_rgba(0,0,0,0.24)] outline-none sm:p-7"
+            class="relative box-border max-h-[90vh] w-full max-w-[560px] overflow-hidden rounded-[2rem] border border-white/60 bg-[#FBF7EF] text-[#24231F] shadow-[0_32px_100px_rgba(0,0,0,0.24)] outline-none"
           >
             <button
               type="button"
-              class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/80 text-stone-600 shadow-sm transition duration-300 hover:bg-[#24231F] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#8B7449]/40"
+              class="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/80 text-stone-600 shadow-sm transition duration-300 hover:bg-[#24231F] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#8B7449]/40"
               aria-label="Закрыть окно"
               @click="closeModal"
             >
@@ -178,113 +178,117 @@ onBeforeUnmount(() => {
               </svg>
             </button>
 
-            <div class="pr-12">
-              <p class="mb-2 text-xs font-medium uppercase tracking-[0.24em] text-[#8B7449]/65">
-                Заявка
-              </p>
+            <div class="box-border max-h-[90vh] w-full min-w-0 overflow-y-auto p-5 sm:p-6 md:p-8">
+              <div class="min-w-0 pr-12">
+                <p class="mb-2 text-xs font-medium uppercase tracking-[0.24em] text-[#8B7449]/65">
+                  Заявка
+                </p>
 
-              <h2
-                id="service-order-title"
-                class="text-2xl font-semibold leading-tight text-[#24231F] sm:text-3xl"
-              >
-                Записаться на услугу
-              </h2>
-            </div>
+                <h2
+                  id="service-order-title"
+                  class="text-2xl font-semibold leading-tight text-[#24231F] sm:text-3xl"
+                >
+                  Записаться на услугу
+                </h2>
+              </div>
 
-            <div class="mt-5 rounded-3xl border border-black/10 bg-white p-4 shadow-sm">
-              <p class="text-xs font-medium uppercase tracking-[0.2em] text-stone-500">
-                Выбранный формат
-              </p>
+              <div class="mt-5 box-border w-full min-w-0 rounded-3xl border border-black/10 bg-white p-4 shadow-sm">
+                <p class="text-xs font-medium uppercase tracking-[0.2em] text-stone-500">
+                  Выбранный формат
+                </p>
 
-              <h3 class="mt-2 text-xl font-semibold leading-7 text-[#24231F]">
-                {{ service.title }}
-              </h3>
+                <h3 class="mt-2 min-w-0 text-xl font-semibold leading-7 text-[#24231F]">
+                  {{ service.title }}
+                </h3>
 
-              <div class="mt-4 grid grid-cols-2 gap-3">
-                <div class="rounded-2xl bg-[#FBF7EF] px-4 py-3">
-                  <span class="block text-[11px] uppercase tracking-[0.16em] text-stone-500">Стоимость</span>
-                  <span class="mt-1 block text-sm font-semibold text-[#8B7449]">{{ service.price }}</span>
-                </div>
+                <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div class="box-border min-w-0 rounded-2xl bg-[#FBF7EF] px-4 py-3">
+                    <span class="block text-[11px] uppercase tracking-[0.16em] text-stone-500">Стоимость</span>
+                    <span class="mt-1 block min-w-0 text-sm font-semibold text-[#8B7449]">{{ service.price }}</span>
+                  </div>
 
-                <div class="rounded-2xl bg-[#FBF7EF] px-4 py-3">
-                  <span class="block text-[11px] uppercase tracking-[0.16em] text-stone-500">Длительность</span>
-                  <span class="mt-1 block text-sm font-semibold text-[#24231F]">{{ service.duration }}</span>
+                  <div class="box-border min-w-0 rounded-2xl bg-[#FBF7EF] px-4 py-3">
+                    <span class="block text-[11px] uppercase tracking-[0.16em] text-stone-500">Длительность</span>
+                    <span class="mt-1 block min-w-0 text-sm font-semibold text-[#24231F]">{{ service.duration }}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div
-              v-if="isSubmitted"
-              class="mt-5 rounded-3xl border border-[#8B7449]/20 bg-white p-5 text-center shadow-sm"
-            >
-              <p class="text-lg font-semibold text-[#24231F]">
-                Заявка успешно отправлена
-              </p>
-            </div>
-
-            <form
-              v-else
-              class="mt-5 grid gap-3.5"
-              @submit.prevent="submitForm"
-            >
-              <label class="block">
-                <span class="mb-1.5 block text-sm font-medium text-[#24231F]">Имя</span>
-                <input
-                  v-model="form.name"
-                  type="text"
-                  class="w-full rounded-2xl border bg-white px-5 py-3.5 text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449]/60"
-                  :class="errors.name ? 'border-[#8B7449]' : 'border-black/10'"
-                  placeholder="Ваше имя"
-                >
-                <span
-                  v-if="errors.name"
-                  class="mt-1.5 block text-sm text-[#8B7449]"
-                >
-                  {{ errors.name }}
-                </span>
-              </label>
-
-              <label class="block">
-                <span class="mb-1.5 block text-sm font-medium text-[#24231F]">Телефон</span>
-                <input
-                  v-model="form.phone"
-                  type="tel"
-                  class="w-full rounded-2xl border bg-white px-5 py-3.5 text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449]/60"
-                  :class="errors.phone ? 'border-[#8B7449]' : 'border-black/10'"
-                  placeholder="+7 999 000-00-00"
-                >
-                <span
-                  v-if="errors.phone"
-                  class="mt-1.5 block text-sm text-[#8B7449]"
-                >
-                  {{ errors.phone }}
-                </span>
-              </label>
-
-              <label class="block">
-                <span class="mb-1.5 block text-sm font-medium text-[#24231F]">Желаемая дата</span>
-                <input
-                  v-model="form.date"
-                  type="date"
-                  class="w-full rounded-2xl border bg-white px-5 py-3.5 text-[#24231F] outline-none transition focus:border-[#8B7449]/60"
-                  :class="errors.date ? 'border-[#8B7449]' : 'border-black/10'"
-                >
-                <span
-                  v-if="errors.date"
-                  class="mt-1.5 block text-sm text-[#8B7449]"
-                >
-                  {{ errors.date }}
-                </span>
-              </label>
-
-              <button
-                type="submit"
-                class="mt-1 w-full rounded-full border border-[#24231F]/25 bg-[#24231F] px-6 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#8B7449] hover:shadow-[0_18px_45px_rgba(139,116,73,0.18)] disabled:cursor-not-allowed disabled:opacity-70"
-                :disabled="isSending"
+              <div
+                v-if="isSubmitted"
+                class="mt-5 box-border w-full min-w-0 rounded-3xl border border-[#8B7449]/20 bg-white p-5 text-center shadow-sm"
               >
-                {{ isSending ? 'Отправляем...' : 'Отправить' }}
-              </button>
-            </form>
+                <p class="text-lg font-semibold text-[#24231F]">
+                  Заявка успешно отправлена
+                </p>
+              </div>
+
+              <form
+                v-else
+                class="mt-5 grid w-full min-w-0 grid-cols-1 gap-4"
+                @submit.prevent="submitForm"
+              >
+                <label class="block min-w-0">
+                  <span class="mb-1.5 block text-sm font-medium text-[#24231F]">Имя</span>
+                  <input
+                    v-model="form.name"
+                    type="text"
+                    class="block box-border w-full min-w-0 max-w-full rounded-2xl border bg-[#F8F3EA] px-4 py-3 text-sm text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449] focus:bg-white"
+                    :class="errors.name ? 'border-[#8B7449]' : 'border-[#8B7449]/20'"
+                    placeholder="Ваше имя"
+                  >
+                  <span
+                    v-if="errors.name"
+                    class="mt-1.5 block text-sm text-[#8B7449]"
+                  >
+                    {{ errors.name }}
+                  </span>
+                </label>
+
+                <label class="block min-w-0">
+                  <span class="mb-1.5 block text-sm font-medium text-[#24231F]">Телефон</span>
+                  <input
+                    v-model="form.phone"
+                    type="tel"
+                    class="block box-border w-full min-w-0 max-w-full rounded-2xl border bg-[#F8F3EA] px-4 py-3 text-sm text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449] focus:bg-white"
+                    :class="errors.phone ? 'border-[#8B7449]' : 'border-[#8B7449]/20'"
+                    placeholder="+7 999 000-00-00"
+                  >
+                  <span
+                    v-if="errors.phone"
+                    class="mt-1.5 block text-sm text-[#8B7449]"
+                  >
+                    {{ errors.phone }}
+                  </span>
+                </label>
+
+                <label class="block min-w-0">
+                  <span class="mb-1.5 block text-sm font-medium text-[#24231F]">Желаемая дата</span>
+                  <input
+                    v-model="form.date"
+                    type="date"
+                    class="block box-border w-full min-w-0 max-w-full rounded-2xl border bg-[#F8F3EA] px-4 py-3 text-sm text-[#24231F] outline-none transition focus:border-[#8B7449] focus:bg-white"
+                    :class="errors.date ? 'border-[#8B7449]' : 'border-[#8B7449]/20'"
+                  >
+                  <span
+                    v-if="errors.date"
+                    class="mt-1.5 block text-sm text-[#8B7449]"
+                  >
+                    {{ errors.date }}
+                  </span>
+                </label>
+
+                <div class="flex min-w-0 flex-col gap-3 sm:flex-row">
+                  <button
+                    type="submit"
+                    class="w-full rounded-full border border-[#24231F]/25 bg-[#24231F] px-6 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#8B7449] hover:shadow-[0_18px_45px_rgba(139,116,73,0.18)] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto sm:flex-1"
+                    :disabled="isSending"
+                  >
+                    {{ isSending ? 'Отправляем...' : 'Отправить' }}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </Transition>
       </div>
