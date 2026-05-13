@@ -8,7 +8,7 @@ const hasScrolled = ref(false)
 const diceContainer = ref(null)
 
 const leftMenuItems = [
-  { label: 'ПРОСТЫМИ СЛОВАМИ', targetId: 'simple-words' },
+  { label: ' ПРО ЛИЛУ', targetId: 'simple-words' },
   { label: 'ПРОВОДНИК ЛИЛЫ', targetId: 'guide' },
   { label: 'ОТЗЫВЫ', targetId: 'reviews' },
 ]
