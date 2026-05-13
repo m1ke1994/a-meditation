@@ -1,4 +1,6 @@
 <script setup>
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+
 const practices = [
   {
     number: '01',
@@ -29,6 +31,51 @@ const practices = [
     type: 'image',
   },
 ]
+
+const selectedMedia = ref(null)
+let previousBodyOverflow = ''
+
+const openMedia = (practice) => {
+  selectedMedia.value = {
+    src: practice.image,
+    type: practice.type,
+    alt: practice.title,
+  }
+
+  previousBodyOverflow = document.body.style.overflow
+  document.body.style.overflow = 'hidden'
+}
+
+const closeMedia = () => {
+  selectedMedia.value = null
+  document.body.style.overflow = previousBodyOverflow
+}
+
+const handleKeydown = (event) => {
+  if (event.key === 'Escape' && selectedMedia.value) {
+    closeMedia()
+  }
+}
+
+const goToMeditationsPricing = () => {
+  window.dispatchEvent(new CustomEvent('select-service-tab', { detail: 'meditations' }))
+
+  requestAnimationFrame(() => {
+    document.querySelector('#pricing')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  })
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeydown)
+  document.body.style.overflow = previousBodyOverflow
+})
 </script>
 
 <template>
@@ -69,7 +116,12 @@ const practices = [
           :key="practice.title"
           class="group relative overflow-hidden rounded-[2rem] border border-white/75 bg-white/80 p-3 shadow-[0_22px_70px_rgba(45,35,20,0.10)] backdrop-blur-xl transition duration-500 hover:-translate-y-1.5 hover:shadow-[0_30px_90px_rgba(45,35,20,0.16)]"
         >
-          <div class="relative h-[330px] overflow-hidden rounded-[1.45rem] bg-[#e9dfcc]">
+          <button
+            type="button"
+            class="relative block h-[330px] w-full cursor-zoom-in overflow-hidden rounded-[1.45rem] bg-[#e9dfcc] text-left"
+            :aria-label="`Открыть ${practice.title}`"
+            @click="openMedia(practice)"
+          >
             <img
               v-if="practice.type === 'image'"
               :src="practice.image"
@@ -92,22 +144,8 @@ const practices = [
               >
             </video>
 
-            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/18 to-transparent" />
-
-            <div class="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-white/20 text-sm font-semibold text-white shadow-xl backdrop-blur-md">
-              {{ practice.number }}
-            </div>
-
-            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
-              <h3 class="text-2xl font-semibold leading-7 tracking-[-0.03em]">
-                {{ practice.title }}
-              </h3>
-
-              <p class="mt-4 text-sm leading-6 text-white/82">
-                {{ practice.text }}
-              </p>
-            </div>
-          </div>
+            <div class="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/10" />
+          </button>
         </article>
       </div>
 
@@ -123,14 +161,95 @@ const practices = [
             </p>
           </div>
 
-          <a
-            href="#services"
+          <button
+            type="button"
             class="inline-flex items-center justify-center rounded-full bg-[#24392f] px-6 py-4 text-sm font-medium text-white shadow-lg shadow-[#24392f]/15 transition duration-300 hover:-translate-y-0.5 hover:bg-[#1E7D8B] hover:shadow-[0_16px_40px_rgba(30,125,139,0.22)]"
+            @click="goToMeditationsPricing"
           >
             Выбрать практику
-          </a>
+          </button>
         </div>
       </div>
     </div>
+
+    <Teleport to="body">
+      <Transition name="media-modal">
+        <div
+          v-if="selectedMedia"
+          class="fixed inset-0 z-[999] flex items-center justify-center bg-black/75 p-5 backdrop-blur-md sm:p-6"
+          @click="closeMedia"
+        >
+          <button
+            type="button"
+            class="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white shadow-2xl backdrop-blur-xl transition duration-300 hover:scale-105 hover:bg-white hover:text-black sm:right-6 sm:top-6"
+            aria-label="Закрыть просмотр"
+            @click.stop="closeMedia"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+
+          <img
+            v-if="selectedMedia.type === 'image'"
+            :src="selectedMedia.src"
+            :alt="selectedMedia.alt"
+            class="max-h-[88vh] max-w-[calc(100vw-32px)] rounded-2xl object-contain shadow-[0_30px_120px_rgba(0,0,0,0.55)] sm:max-h-[92vh] sm:max-w-[92vw]"
+            @click.stop
+          >
+
+          <video
+            v-else
+            :src="selectedMedia.src"
+            class="max-h-[88vh] max-w-[calc(100vw-32px)] rounded-2xl object-contain shadow-[0_30px_120px_rgba(0,0,0,0.55)] sm:max-h-[92vh] sm:max-w-[92vw]"
+            controls
+            autoplay
+            muted
+            loop
+            playsinline
+            @click.stop
+          />
+        </div>
+      </Transition>
+    </Teleport>
   </section>
 </template>
+
+<style scoped>
+.media-modal-enter-active,
+.media-modal-leave-active {
+  transition: opacity 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.media-modal-enter-from,
+.media-modal-leave-to {
+  opacity: 0;
+}
+
+.media-modal-enter-active img,
+.media-modal-enter-active video,
+.media-modal-leave-active img,
+.media-modal-leave-active video {
+  transition:
+    opacity 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.media-modal-enter-from img,
+.media-modal-enter-from video,
+.media-modal-leave-to img,
+.media-modal-leave-to video {
+  opacity: 0;
+  transform: scale(0.96);
+}
+</style>

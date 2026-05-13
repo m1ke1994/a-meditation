@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { serviceGroups } from '../data/services'
 import ServiceOrderModal from './ServiceOrderModal.vue'
 
@@ -17,6 +17,22 @@ const openOrderModal = (service) => {
 const closeOrderModal = () => {
   selectedService.value = null
 }
+
+const handleServiceTabSelect = (event) => {
+  const targetGroupId = event.detail
+
+  if (!serviceGroups.some((group) => group.id === targetGroupId)) return
+
+  activeGroupId.value = targetGroupId
+}
+
+onMounted(() => {
+  window.addEventListener('select-service-tab', handleServiceTabSelect)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('select-service-tab', handleServiceTabSelect)
+})
 </script>
 
 <template>
