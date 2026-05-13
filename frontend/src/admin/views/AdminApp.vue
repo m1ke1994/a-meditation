@@ -11,14 +11,18 @@ import { useSiteContentStore } from '../stores/siteContent'
 import { useAdminThemeStore } from '../stores/themeStore'
 
 const ADMIN_PASSWORD = 'ADMIN_PASSWORD'
+const ADMIN_EMAIL = 'admin@example.com'
+const MVP_ADMIN_PASSWORD = 'admin123'
 
 const contentStore = useSiteContentStore()
 const themeStore = useAdminThemeStore()
 const isAuthed = ref(sessionStorage.getItem('admin-auth') === 'true')
+const email = ref('')
 const password = ref('')
 const loginError = ref('')
 const activeSection = ref('hero')
 const isSidebarOpen = ref(false)
+const isPasswordVisible = ref(false)
 
 const sections = [
   { key: 'dashboard', label: adminSectionLabels.dashboard },
@@ -49,20 +53,42 @@ const currentThemeLabel = computed(() => (
 ))
 
 const login = () => {
-  if (password.value !== ADMIN_PASSWORD) {
-    loginError.value = adminHints.wrongPassword
+  const normalizedEmail = email.value.trim()
+
+  if (!normalizedEmail) {
+    loginError.value = 'Введите почту'
+    return
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    loginError.value = 'Введите корректную почту'
+    return
+  }
+
+  if (!password.value) {
+    loginError.value = 'Введите пароль'
+    return
+  }
+
+  if (normalizedEmail !== ADMIN_EMAIL || (password.value !== MVP_ADMIN_PASSWORD && password.value !== ADMIN_PASSWORD)) {
+    loginError.value = 'Неверная почта или пароль'
     return
   }
 
   sessionStorage.setItem('admin-auth', 'true')
+  sessionStorage.setItem('admin-email', normalizedEmail)
   isAuthed.value = true
   loginError.value = ''
 }
 
 const logout = () => {
   sessionStorage.removeItem('admin-auth')
+  sessionStorage.removeItem('admin-email')
   isAuthed.value = false
   isSidebarOpen.value = false
+  email.value = ''
+  password.value = ''
+  isPasswordVisible.value = false
 }
 
 const save = async () => {
@@ -105,19 +131,42 @@ onBeforeUnmount(() => {
         class="w-full max-w-[420px] overflow-hidden rounded-[2rem] border border-white/70 bg-white/85 p-5 shadow-[0_30px_90px_rgba(45,35,20,0.14)] dark:border-white/10 dark:bg-[#1E1C19] dark:shadow-none sm:p-6"
         @submit.prevent="login"
       >
-        <p class="text-xs font-medium uppercase tracking-[0.28em] text-[#8B7449] dark:text-[#B89B67]">Admin</p>
+        <p class="text-xs font-medium uppercase tracking-[0.28em] text-[#8B7449] dark:text-[#B89B67]">Лила Москва</p>
         <h1 class="mt-3 break-words text-3xl font-semibold text-[#24231F] dark:text-[#F3EEE5]">
-          {{ adminHints.loginTitle }}
+          Добро пожаловать
         </h1>
         <p class="mt-3 text-sm leading-6 text-stone-600 dark:text-[#B7ADA0]">
-          {{ adminHints.loginText }}
+          Войдите в панель управления сайтом, чтобы изменить тексты, изображения, услуги и настройки.
         </p>
-        <input
-          v-model="password"
-          type="password"
-          class="mt-6 block w-full min-w-0 max-w-full rounded-2xl border border-[#8B7449]/20 bg-[#F8F3EA] px-4 py-3 text-[#24231F] outline-none focus:border-[#8B7449] focus:bg-white dark:border-white/10 dark:bg-[#22201D] dark:text-[#F3EEE5] dark:placeholder:text-stone-500 dark:focus:border-[#B89B67]"
-          :placeholder="adminHints.password"
-        >
+        <label class="mt-6 block min-w-0">
+          <span class="mb-1.5 block text-sm font-medium text-[#24231F] dark:text-[#F3EEE5]">Почта</span>
+          <input
+            v-model="email"
+            type="email"
+            class="block w-full min-w-0 max-w-full rounded-2xl border border-[#8B7449]/20 bg-[#F8F3EA] px-4 py-3 text-[#24231F] outline-none focus:border-[#8B7449] focus:bg-white focus:ring-4 focus:ring-[#8B7449]/10 dark:border-white/10 dark:bg-[#22201D] dark:text-[#F3EEE5] dark:placeholder:text-stone-500 dark:focus:border-[#B89B67] dark:focus:ring-[#B89B67]/10"
+            placeholder="Введите почту"
+            autocomplete="email"
+          >
+        </label>
+        <label class="mt-4 block min-w-0">
+          <span class="mb-1.5 block text-sm font-medium text-[#24231F] dark:text-[#F3EEE5]">Пароль</span>
+          <span class="relative block min-w-0">
+            <input
+              v-model="password"
+              :type="isPasswordVisible ? 'text' : 'password'"
+              class="block w-full min-w-0 max-w-full rounded-2xl border border-[#8B7449]/20 bg-[#F8F3EA] py-3 pl-4 pr-28 text-[#24231F] outline-none focus:border-[#8B7449] focus:bg-white focus:ring-4 focus:ring-[#8B7449]/10 dark:border-white/10 dark:bg-[#22201D] dark:text-[#F3EEE5] dark:placeholder:text-stone-500 dark:focus:border-[#B89B67] dark:focus:ring-[#B89B67]/10"
+              placeholder="Введите пароль"
+              autocomplete="current-password"
+            >
+            <button
+              type="button"
+              class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full px-3 py-1.5 text-xs font-medium text-[#8B7449] transition hover:bg-[#8B7449]/10 dark:text-[#B89B67] dark:hover:bg-white/5"
+              @click="isPasswordVisible = !isPasswordVisible"
+            >
+              {{ isPasswordVisible ? 'Скрыть' : 'Показать' }}
+            </button>
+          </span>
+        </label>
         <p
           v-if="loginError"
           class="mt-3 text-sm text-[#8B7449] dark:text-[#B89B67]"
