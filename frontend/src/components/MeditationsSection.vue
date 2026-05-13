@@ -1,36 +1,10 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useSiteContentStore } from '../admin/stores/siteContent'
 
-const practices = [
-  {
-    number: '01',
-    title: 'Глубокое расслабление',
-    text: 'Мягкая практика помогает отпустить накопленное напряжение, замедлиться и вернуться в спокойное телесное состояние.',
-    image: '/images/m1.jpg',
-    type: 'image',
-  },
-  {
-    number: '02',
-    title: 'Восстановление ресурса',
-    text: 'Дыхание, тишина и бережное внимание к себе создают пространство для отдыха, наполнения и внутренней опоры.',
-    image: '/images/m2.MP4',
-    type: 'video',
-  },
-  {
-    number: '03',
-    title: 'Контакт с собой',
-    text: 'В спокойном пространстве становится проще услышать свои чувства, потребности и честные внутренние ответы.',
-    image: '/images/m3.jpg',
-    type: 'image',
-  },
-  {
-    number: '04',
-    title: 'Внутренняя настройка',
-    text: 'Практика помогает мягко собраться, почувствовать устойчивость и настроиться на важный период жизни.',
-    image: '/images/m4.jpg',
-    type: 'image',
-  },
-]
+const contentStore = useSiteContentStore()
+const meditations = computed(() => contentStore.content.meditations)
+const practices = computed(() => meditations.value.practices || [])
 
 const selectedMedia = ref(null)
 let previousBodyOverflow = ''
@@ -90,22 +64,22 @@ onBeforeUnmount(() => {
       <div class="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-end">
         <div>
           <span class="mb-4 inline-flex rounded-full border border-[#8B7449]/40 bg-white/70 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#8B7449]">
-            Практики тишины
+            {{ meditations.eyebrow }}
           </span>
 
           <h2 class="text-4xl font-semibold leading-[1.04] tracking-[-0.04em] text-[#24231F] sm:text-5xl md:text-6xl">
-            Медитации
-            <span class="block text-[#8B7449]">для восстановления</span>
+            {{ meditations.title }}
+            <span class="block text-[#8B7449]">{{ meditations.accent }}</span>
           </h2>
         </div>
 
         <div class="max-w-2xl lg:justify-self-end">
           <p class="text-xl font-medium leading-8 text-[#24231F] sm:text-2xl sm:leading-9">
-            Пространство тишины, бережного внимания и внутренней опоры
+            {{ meditations.subtitle }}
           </p>
 
           <p class="mt-5 text-base leading-8 text-stone-600 sm:text-lg sm:leading-8">
-            Медитации помогают замедлиться, отпустить лишнее напряжение и мягко вернуться к себе. Это спокойная практика для восстановления ресурса, ясности и более глубокого контакта со своим состоянием.
+            {{ meditations.text }}
           </p>
         </div>
       </div>
@@ -153,11 +127,11 @@ onBeforeUnmount(() => {
         <div class="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
           <div>
             <p class="text-sm font-medium uppercase tracking-[0.22em] text-[#8B7449]">
-              Формат практики
+              {{ meditations.formatTitle }}
             </p>
 
             <p class="mt-3 max-w-3xl text-lg leading-8 text-stone-700">
-              Медитации проходят в мягком темпе: без давления, без спешки и без необходимости “делать правильно”. Главное — ваше состояние, дыхание и бережное возвращение внимания к себе.
+              {{ meditations.formatText }}
             </p>
           </div>
 
@@ -166,7 +140,7 @@ onBeforeUnmount(() => {
             class="inline-flex items-center justify-center rounded-full bg-[#24231F] px-6 py-4 text-sm font-medium text-white shadow-lg shadow-[#24231F]/15 transition duration-300 hover:-translate-y-0.5 hover:bg-[#8B7449] hover:shadow-[0_16px_40px_rgba(139,116,73,0.18)]"
             @click="goToMeditationsPricing"
           >
-            Выбрать практику
+            {{ meditations.buttonText }}
           </button>
         </div>
       </div>

@@ -1,23 +1,18 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { useSiteContentStore } from '../admin/stores/siteContent'
 
 const isOpen = ref(false)
 const hasScrolled = ref(false)
 const diceContainer = ref(null)
+const contentStore = useSiteContentStore()
+const header = computed(() => contentStore.content.header)
 
-const leftMenuItems = [
-  { label: ' ПРО ЛИЛУ', targetId: 'simple-words' },
-  { label: 'ПРОВОДНИК ЛИЛЫ', targetId: 'guide' },
-  { label: 'ОТЗЫВЫ', targetId: 'reviews' },
-]
-const rightMenuItems = [
-  { label: 'МЕДИТАЦИИ', targetId: 'meditations' },
-  { label: 'СТОИМОСТЬ', targetId: 'pricing' },
-  { label: 'КОНТАКТЫ', targetId: 'contacts' },
-]
-const mobileMenuItems = [...leftMenuItems, ...rightMenuItems]
+const leftMenuItems = computed(() => header.value.leftMenuItems || [])
+const rightMenuItems = computed(() => header.value.rightMenuItems || [])
+const mobileMenuItems = computed(() => [...leftMenuItems.value, ...rightMenuItems.value])
 
 const modelUrl = '/models/dice.glb'
 
@@ -233,14 +228,14 @@ onBeforeUnmount(() => {
         aria-label="Лила Москва"
         @click="closeMenu"
       >
-        <span>ЛИЛА</span>
+        <span>{{ header.brandLeft }}</span>
         <span
           ref="diceContainer"
           class="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-visible md:h-16 md:w-16"
           role="img"
           aria-label="3D кубик"
         />
-        <span>МОСКВА</span>
+        <span>{{ header.brandRight }}</span>
       </RouterLink>
 
       <nav class="hidden items-center justify-end gap-5 text-[11px] font-medium uppercase tracking-[0.18em] text-white/80 md:flex lg:gap-6 xl:gap-7">

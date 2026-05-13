@@ -5,3 +5,18 @@
 body {
   margin: 0;
 }
+
+html,
+body,
+#app {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.admin-theme-scope,
+.admin-theme-scope * {
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease;
+}

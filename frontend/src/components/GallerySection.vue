@@ -1,28 +1,10 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useSiteContentStore } from '../admin/stores/siteContent'
 
-const galleryItems = [
-  {
-    src: '/images/DSC08101.JPG',
-    alt: 'Атмосфера практики Лила',
-    title: 'Пространство встречи',
-  },
-  {
-    src: '/images/2025-02-26 13-06-17.JPG',
-    alt: 'Практика и пространство',
-    title: 'Тихая практика',
-  },
-  {
-    src: '/images/IMG_5131.JPG',
-    alt: 'Детали пространства для практик',
-    title: 'Детали пространства',
-  },
-  {
-    src: '/images/Lila_Olga_2.2.poster.jpg',
-    alt: 'Глубокое состояние практики',
-    title: 'Глубокое состояние',
-  },
-]
+const contentStore = useSiteContentStore()
+const gallery = computed(() => contentStore.content.gallery)
+const galleryItems = computed(() => gallery.value.items || [])
 
 const selectedMedia = ref(null)
 let previousBodyOverflow = ''
@@ -62,15 +44,15 @@ onBeforeUnmount(() => {
     <div class="mx-auto max-w-[1200px]">
       <div class="mx-auto max-w-[760px] text-center">
         <p class="mb-3 text-xs font-medium uppercase tracking-[0.28em] text-[#8B7449]/60">
-          Визуальная история
+          {{ gallery.eyebrow }}
         </p>
 
         <h2 class="text-4xl font-semibold leading-tight tracking-[0.01em] text-[#24231F] sm:text-5xl md:text-6xl">
-          Галерея
+          {{ gallery.title }}
         </h2>
 
         <p class="mt-5 text-lg leading-8 text-stone-600 sm:text-xl sm:leading-9">
-          Атмосфера практик, встреч и пространства
+          {{ gallery.text }}
         </p>
       </div>
 

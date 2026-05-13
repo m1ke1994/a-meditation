@@ -1,22 +1,14 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { useSiteContentStore } from '../admin/stores/siteContent'
 
 const diceContainer = ref(null)
-
-const navLinks = [
-  { label: 'Простыми словами', target: 'simple-words' },
-  { label: 'Проводник Лилы', target: 'guide' },
-  { label: 'Отзывы', target: 'reviews' },
-  { label: 'Стоимость', target: 'pricing' },
-]
-
-const contactLinks = [
-  { label: 'Записаться на игру', target: 'contacts' },
-  { label: 'Telegram', href: '#' },
-  { label: 'WhatsApp', href: '#' },
-]
+const contentStore = useSiteContentStore()
+const footer = computed(() => contentStore.content.footer)
+const navLinks = computed(() => footer.value.navLinks || [])
+const contactLinks = computed(() => footer.value.contactLinks || [])
 
 const modelUrl = '/models/dice.glb'
 
@@ -178,7 +170,7 @@ onBeforeUnmount(() => {
             class="inline-flex items-center gap-2 text-sm font-semibold uppercase leading-none tracking-[0.22em] text-white"
             aria-label="Лила Москва"
           >
-            <span>ЛИЛА</span>
+            <span>{{ footer.brandLeft }}</span>
 
             <span
               ref="diceContainer"
@@ -187,18 +179,18 @@ onBeforeUnmount(() => {
               aria-label="3D кубик"
             />
 
-            <span>МОСКВА</span>
+            <span>{{ footer.brandRight }}</span>
           </RouterLink>
 
           <p class="text-sm leading-6 text-white/70">
-            © 2025 All rights reserved.
+            {{ footer.copyright }}
           </p>
         </div>
 
         <!-- Navigation -->
         <div class="md:justify-self-center">
           <h2 class="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-white/70">
-            Навигация
+            {{ footer.navTitle }}
           </h2>
 
           <nav class="flex flex-col gap-2.5 text-sm text-white/70">
@@ -217,7 +209,7 @@ onBeforeUnmount(() => {
         <!-- Contacts -->
        <div class="md:justify-self-end">
           <h2 class="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-white/70">
-            Контакты
+            {{ footer.contactsTitle }}
           </h2>
 
           <nav class="flex flex-col gap-2.5 text-sm text-white/70">
@@ -235,7 +227,7 @@ onBeforeUnmount(() => {
       </div>
 
       <div class="mt-9 border-t border-white pt-5 text-sm leading-6 text-white/75">
-        Игра Лила в Москве — путь к ясности через честный диалог с собой.
+        {{ footer.bottomText }}
       </div>
     </div>
   </footer>

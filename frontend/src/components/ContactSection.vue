@@ -1,5 +1,6 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useSiteContentStore } from '../admin/stores/siteContent'
 
 const form = ref({
   name: '',
@@ -9,32 +10,9 @@ const form = ref({
   agree: true,
 })
 
-const locations = [
-  {
-    title: 'Парк Горького',
-    address: 'Москва, ул. Крымский Вал, 9',
-    lat: 55.7298,
-    lng: 37.6011,
-  },
-  {
-    title: 'Патриаршие пруды',
-    address: 'Москва, Патриаршие пруды',
-    lat: 55.7636,
-    lng: 37.5906,
-  },
-  {
-    title: 'ВДНХ',
-    address: 'Москва, проспект Мира, 119',
-    lat: 55.8298,
-    lng: 37.6328,
-  },
-  {
-    title: 'Третьяковская галерея',
-    address: 'Москва, Лаврушинский пер., 10',
-    lat: 55.7414,
-    lng: 37.6208,
-  },
-]
+const contentStore = useSiteContentStore()
+const contacts = computed(() => contentStore.content.contacts)
+const locations = computed(() => contacts.value.locations || [])
 
 const mapRef = ref(null)
 const mapStatus = ref('loading')
@@ -76,9 +54,9 @@ const initMap = async () => {
       controls: ['zoomControl'],
     })
 
-    const coordinates = locations.map((location) => [location.lat, location.lng])
+    const coordinates = locations.value.map((location) => [location.lat, location.lng])
 
-    locations.forEach((location) => {
+    locations.value.forEach((location) => {
       const placemark = new ymaps.Placemark(
         [location.lat, location.lng],
         {
@@ -132,15 +110,15 @@ onBeforeUnmount(() => {
       <!-- Header -->
       <div class="mx-auto max-w-[760px] text-center">
         <p class="mb-3 text-xs font-medium uppercase tracking-[0.28em] text-black/40">
-          Связаться с нами
+          {{ contacts.eyebrow }}
         </p>
 
         <h2 class="text-3xl font-semibold leading-tight tracking-[0.02em] text-[#24231F] sm:text-4xl md:text-5xl">
-          Контакты и запись на игру
+          {{ contacts.title }}
         </h2>
 
         <p class="mt-4 text-base leading-7 text-stone-600 sm:text-lg">
-          Оставьте заявку, и мы подберём удобный формат игры Лила для вашего запроса.
+          {{ contacts.text }}
         </p>
       </div>
 
@@ -150,11 +128,11 @@ onBeforeUnmount(() => {
         <!-- FORM -->
         <div class="rounded-[2rem] border border-black/10 bg-white p-6 shadow-[0_25px_80px_rgba(0,0,0,0.06)] md:p-8">
           <h3 class="text-2xl font-semibold text-[#24231F]">
-            Форма обратной связи
+            {{ contacts.formTitle }}
           </h3>
 
           <p class="mt-3 text-sm leading-6 text-stone-500">
-            Заполните форму, и мы свяжемся с вами в ближайшее время.
+            {{ contacts.formText }}
           </p>
 
           <form class="mt-7 space-y-4" @submit.prevent="submitForm">
@@ -212,23 +190,23 @@ onBeforeUnmount(() => {
         <div class="overflow-hidden rounded-[2rem] border border-black/10 bg-white shadow-[0_25px_80px_rgba(0,0,0,0.06)]">
           <div class="p-6 md:p-8">
             <h3 class="text-2xl font-semibold text-[#24231F]">
-              Где проходит игра
+              {{ contacts.infoTitle }}
             </h3>
 
             <div class="mt-5 space-y-3 text-stone-600">
               <p>
-                <span class="text-black/40">Адрес:</span><br>
-                Москва, ул. Боманическая, 33В стр 1
+                <span class="text-black/40">{{ contacts.addressLabel }}</span><br>
+                {{ contacts.address }}
               </p>
 
               <p>
-                <span class="text-black/40">Телефон / Telegram:</span><br>
-                +7 903 198-91-88
+                <span class="text-black/40">{{ contacts.phoneLabel }}</span><br>
+                {{ contacts.phone }}
               </p>
 
               <p>
-                <span class="text-black/40">Формат:</span><br>
-                индивидуально, парами или в группе
+                <span class="text-black/40">{{ contacts.formatLabel }}</span><br>
+                {{ contacts.format }}
               </p>
             </div>
 

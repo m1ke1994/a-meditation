@@ -1,16 +1,10 @@
 <script setup>
-import { onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
+import { useSiteContentStore } from '../admin/stores/siteContent'
 
-const heroPosterUrl = '/images/Lila_Olga_2.2.poster.jpg'
-const heroVideoUrl = '/images/Lila_Olga_2.2_compressed.mp4'
-
-const heroPhrases = [
-  'Игра, которая помогает услышать себя',
-  'Пространство для честного внутреннего диалога',
-  'Мягкий путь к ясности, решениям и опоре',
-  'Лила в Москве — встреча с собой через игру',
-  'Когда ответы приходят не из шума, а из тишины',
-]
+const contentStore = useSiteContentStore()
+const hero = computed(() => contentStore.content.hero)
+const heroPhrases = computed(() => hero.value.phrases || [])
 
 const heroRef = ref(null)
 const videoRef = ref(null)
@@ -35,7 +29,7 @@ const scrollToSection = (targetId) => {
 
 onMounted(() => {
   phraseInterval = window.setInterval(() => {
-    activePhraseIndex.value = (activePhraseIndex.value + 1) % heroPhrases.length
+    activePhraseIndex.value = (activePhraseIndex.value + 1) % Math.max(heroPhrases.value.length, 1)
   }, 3800)
 
   if (!heroRef.value) return
@@ -86,10 +80,10 @@ onUnmounted(() => {
       playsinline
       webkit-playsinline
       preload="auto"
-      :poster="heroPosterUrl"
+      :poster="hero.posterUrl"
       aria-hidden="true"
     >
-      <source :src="heroVideoUrl" type="video/mp4">
+      <source :src="hero.videoUrl" type="video/mp4">
     </video>
 
     <div class="absolute inset-0 -z-10 bg-black/10" />
@@ -99,7 +93,7 @@ onUnmounted(() => {
     <div class="mx-auto w-full max-w-[1280px] px-6 py-20 md:px-8">
       <div class="max-w-[760px]">
         <p class="mb-5 text-xs font-medium uppercase tracking-[0.28em] text-white/75">
-          ЛИЛА МОСКВА
+          {{ hero.eyebrow }}
         </p>
 
         <div class="relative min-h-[220px] sm:min-h-[250px] md:min-h-[300px]">
@@ -114,7 +108,7 @@ onUnmounted(() => {
         </div>
 
         <p class="mt-1 max-w-2xl text-base leading-7 text-white/78 sm:text-lg md:text-xl md:leading-8">
-          Практика, где игра становится проводником к ясности, спокойствию и внутренним ответам.
+          {{ hero.text }}
         </p>
 
         <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -123,14 +117,14 @@ onUnmounted(() => {
             class="inline-flex min-h-12 items-center justify-center rounded-full border border-white/20 bg-white/16 px-7 text-sm font-medium text-white shadow-lg shadow-black/20 backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-white/35 hover:bg-white/22 hover:shadow-[0_18px_45px_rgba(255,255,255,0.13)]"
             @click.prevent="scrollToSection('contacts')"
           >
-            Записаться на игру
+            {{ hero.primaryButton }}
           </a>
           <a
             href="#"
             class="inline-flex min-h-12 items-center justify-center rounded-full border border-white/15 bg-black/20 px-7 text-sm font-medium text-white/90 shadow-lg shadow-black/20 backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/12 hover:text-white hover:shadow-[0_18px_45px_rgba(255,255,255,0.1)]"
             @click.prevent="scrollToSection('pricing')"
           >
-            Узнать стоимость
+            {{ hero.secondaryButton }}
           </a>
         </div>
       </div>

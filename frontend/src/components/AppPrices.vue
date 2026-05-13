@@ -1,13 +1,16 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { serviceGroups } from '../data/services'
+import { useSiteContentStore } from '../admin/stores/siteContent'
 import ServiceOrderModal from './ServiceOrderModal.vue'
 
-const activeGroupId = ref(serviceGroups[0].id)
+const contentStore = useSiteContentStore()
+const prices = computed(() => contentStore.content.prices)
+const serviceGroups = computed(() => prices.value.groups || [])
+const activeGroupId = ref('lila')
 const selectedService = ref(null)
 
 const activeGroup = computed(() => (
-  serviceGroups.find((group) => group.id === activeGroupId.value) || serviceGroups[0]
+  serviceGroups.value.find((group) => group.id === activeGroupId.value) || serviceGroups.value[0] || { items: [] }
 ))
 
 const openOrderModal = (service) => {
@@ -21,7 +24,7 @@ const closeOrderModal = () => {
 const handleServiceTabSelect = (event) => {
   const targetGroupId = event.detail
 
-  if (!serviceGroups.some((group) => group.id === targetGroupId)) return
+  if (!serviceGroups.value.some((group) => group.id === targetGroupId)) return
 
   activeGroupId.value = targetGroupId
 }
@@ -43,15 +46,15 @@ onBeforeUnmount(() => {
     <div class="mx-auto max-w-[1200px]">
       <div class="mx-auto max-w-[760px] text-center">
         <p class="mb-3 text-xs font-medium uppercase tracking-[0.28em] text-[#8B7449]/60">
-          Прайсы
+          {{ prices.eyebrow }}
         </p>
 
         <h2 class="text-3xl font-semibold uppercase leading-tight tracking-[0.08em] text-[#24231F] sm:text-4xl md:text-5xl">
-          Форматы услуг
+          {{ prices.title }}
         </h2>
 
         <p class="mt-4 text-base leading-7 text-stone-600 sm:text-lg">
-          Выберите направление и подходящий формат участия
+          {{ prices.text }}
         </p>
       </div>
 

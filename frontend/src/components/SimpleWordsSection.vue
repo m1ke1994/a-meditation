@@ -1,57 +1,16 @@
 <script setup>
 import { computed, ref } from 'vue'
+import { useSiteContentStore } from '../admin/stores/siteContent'
 
 const activeSimpleIndex = ref(0)
 const activeProcessIndex = ref(0)
 const simpleScrollRef = ref(null)
 const processScrollRef = ref(null)
+const contentStore = useSiteContentStore()
+const simpleWords = computed(() => contentStore.content.simpleWords)
 
-const processCards = [
-  {
-    icon: '01',
-    title: 'Без спешки',
-    text: 'Есть возможность проходить игру до полного прохождения.',
-  },
-  {
-    icon: '02',
-    title: 'С мастером игры',
-    text: 'Глубокие практики Лилы простым и понятным языком.',
-  },
-  {
-    icon: '03',
-    title: 'Подберём дату',
-    text: 'Удобные дата и время игры в группе или индивидуально.',
-  },
-  {
-    icon: '04',
-    title: 'Большое поле',
-    text: 'Играющий перемещается по клеткам поля своими ногами.',
-  },
-]
-
-const simpleCards = [
-  {
-    number: '01',
-    title: 'Что такое Лила?',
-    text: 'Лила — древняя трансформационная игра, где человек формулирует запрос и проходит путь по игровому полю. Каждый ход помогает посмотреть на ситуацию глубже и честнее.',
-  },
-  {
-    number: '02',
-    title: 'Как проходит игра?',
-    text: 'Игрок движется по клеткам поля, а проводник помогает расшифровать значения состояний и связать их с реальной жизнью, вопросом или внутренним выбором.',
-  },
-  {
-    number: '03',
-    title: 'Для чего это нужно?',
-    text: 'Игра помогает увидеть скрытые причины напряжения, найти опору, принять решение и почувствовать больше ясности в себе.',
-  },
-  {
-    number: '04',
-    title: 'Что получают игроки?',
-    text: `Уверенность, ясность, отношения, работу, жизнь мечты.
-          Вы точно узнаете, чего на самом деле хотите, раскроете свой потенциал и запустите процесс изменений в свою жизнь`,
-  },
-]
+const processCards = computed(() => simpleWords.value.processCards || [])
+const simpleCards = computed(() => simpleWords.value.simpleCards || [])
 
 const simpleProgress = computed(() => activeSimpleIndex.value + 1)
 const processProgress = computed(() => activeProcessIndex.value + 1)
@@ -99,16 +58,15 @@ const scrollToCard = (type, index) => {
       <div>
         <div class="mx-auto max-w-[780px] text-center">
           <p class="mb-4 text-xs font-medium uppercase tracking-[0.28em] text-black/45">
-            Понятно и бережно
+            {{ simpleWords.eyebrow }}
           </p>
 
           <h2 class="text-4xl font-semibold leading-tight tracking-[0.01em] text-[#24231F] sm:text-5xl md:text-6xl">
-            Лила простыми словами
+            {{ simpleWords.title }}
           </h2>
 
           <p class="mt-5 text-lg leading-8 text-stone-600 sm:text-xl sm:leading-9">
-            Игра Лила — это не гадание и не случайный набор ходов. Это мягкий способ увидеть свои внутренние состояния,
-            вопросы и повторяющиеся сценарии через игровое поле.
+            {{ simpleWords.text }}
           </p>
         </div>
 
@@ -191,11 +149,11 @@ const scrollToCard = (type, index) => {
       <div class="mt-20 md:mt-24">
         <div class="mx-auto max-w-[760px] text-center">
           <p class="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
-            Процесс
+            {{ simpleWords.processEyebrow }}
           </p>
 
           <h2 class="mt-3 text-3xl font-semibold uppercase leading-tight tracking-[0.08em] text-[#24231F] sm:text-4xl md:text-5xl">
-            Как проходит Лила?
+            {{ simpleWords.processTitle }}
           </h2>
         </div>
 

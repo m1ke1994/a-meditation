@@ -1,8 +1,11 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useSiteContentStore } from '../admin/stores/siteContent'
 
 const sectionRef = ref(null)
 const isVisible = ref(false)
+const contentStore = useSiteContentStore()
+const guide = computed(() => contentStore.content.aboutGuide)
 
 const counters = ref({
   percent: 0,
@@ -39,6 +42,11 @@ const metrics = [
     icon: 'M12 3.5v2.2 M12 18.3v2.2 M5.7 5.7l1.5 1.5 M16.8 16.8l1.5 1.5 M3.5 12h2.2 M18.3 12h2.2 M5.7 18.3l1.5-1.5 M16.8 7.2l1.5-1.5 M8.5 12a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0Z',
   },
 ]
+
+const editableMetrics = computed(() => (guide.value.metrics || metrics).map((metric) => ({
+  ...metric,
+  icon: metric.icon || metrics.find((baseMetric) => baseMetric.id === metric.id)?.icon || metrics[0].icon,
+})))
 
 const introParagraphs = [
   'Пройдя глубокий опыт випассаны - специального ретрита, проведенного в полном молчании, аскетизме и медитациях в 2022 году на День Рождения в подарок получила участие в Игре Лила.',
@@ -78,14 +86,16 @@ const animateCounters = () => {
   hasAnimatedCounters = true
   const duration = 1400
   const startTime = performance.now()
+  const percentTarget = editableMetrics.value.find((metric) => metric.id === 'percent')?.target || 100
+  const gamesTarget = editableMetrics.value.find((metric) => metric.id === 'games')?.target || 2000
 
   const tick = (time) => {
     const progress = Math.min((time - startTime) / duration, 1)
     const easedProgress = easeOutCubic(progress)
 
     counters.value = {
-      percent: Math.round(100 * easedProgress),
-      games: Math.round(2000 * easedProgress),
+      percent: Math.round(percentTarget * easedProgress),
+      games: Math.round(gamesTarget * easedProgress),
     }
 
     if (progress < 1) {
@@ -94,8 +104,8 @@ const animateCounters = () => {
     }
 
     counters.value = {
-      percent: 100,
-      games: 2000,
+      percent: percentTarget,
+      games: gamesTarget,
     }
   }
 
@@ -154,12 +164,12 @@ onBeforeUnmount(() => {
     <div class="relative mx-auto max-w-[1120px]">
       <div class="mb-7 max-w-3xl">
         <span class="mb-3 inline-flex rounded-full border border-[#8B7449]/40 bg-white/70 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#8B7449]">
-          Проводник игры Лила
+          {{ guide.eyebrow }}
         </span>
 
         <h2 class="text-3xl font-semibold leading-[1.04] tracking-[-0.04em] text-[#24231F] sm:text-4xl md:text-5xl">
-          Ольга Бердникова
-          <span class="block text-[#8B7449]">Leelabird</span>
+          {{ guide.title }}
+          <span class="block text-[#8B7449]">{{ guide.accent }}</span>
         </h2>
       </div>
 
@@ -170,7 +180,7 @@ onBeforeUnmount(() => {
         >
           <div class="relative h-full overflow-hidden rounded-[1.35rem]">
             <img
-              :src="imageUrl"
+              :src="guide.image"
               alt="Проводник игры Лила Ольга Бердникова"
               class="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.03]"
             >
@@ -179,11 +189,11 @@ onBeforeUnmount(() => {
 
             <div class="absolute bottom-4 left-4 right-4 rounded-2xl border border-white/20 bg-white/18 p-4 text-white shadow-2xl backdrop-blur-xl">
               <p class="text-[11px] uppercase tracking-[0.24em] text-white/70">
-                Leelabird
+                {{ guide.accent }}
               </p>
 
               <p class="mt-2 text-lg font-semibold leading-tight sm:text-xl">
-                Практик осознанности, медитации и Игры Лила
+                {{ guide.imageCaption }}
               </p>
             </div>
           </div>
@@ -196,7 +206,7 @@ onBeforeUnmount(() => {
           <div class="guide-scroll lg:h-full lg:overflow-y-auto lg:pr-3">
             <div class="space-y-4 text-[14px] leading-7 text-stone-700 sm:text-[15px]">
               <p
-                v-for="paragraph in introParagraphs"
+                v-for="paragraph in guide.introParagraphs"
                 :key="paragraph"
               >
                 {{ paragraph }}
@@ -205,7 +215,7 @@ onBeforeUnmount(() => {
 
             <div class="mt-6 space-y-4 text-[14px] leading-7 text-stone-700 sm:text-[15px]">
               <p
-                v-for="paragraph in expandedParagraphs"
+                v-for="paragraph in guide.expandedParagraphs"
                 :key="paragraph"
               >
                 {{ paragraph }}
@@ -214,12 +224,12 @@ onBeforeUnmount(() => {
 
             <div class="my-6 rounded-[1.35rem] border border-[#8B7449]/50 bg-[#FBF7EF] p-5">
               <p class="text-[12px] font-medium uppercase tracking-[0.18em] text-[#8B7449]">
-                250+ человек уже прошли со мной свою трансформацию:
+                {{ guide.resultsTitle }}
               </p>
 
               <ul class="mt-4 grid gap-2.5">
                 <li
-                  v-for="item in results"
+                  v-for="item in guide.results"
                   :key="item"
                   class="flex gap-3 text-[14px] leading-6 text-stone-700"
                 >
@@ -231,7 +241,7 @@ onBeforeUnmount(() => {
 
             <div class="space-y-4 text-[14px] leading-7 text-stone-700 sm:text-[15px]">
               <p
-                v-for="paragraph in finalParagraphs"
+                v-for="paragraph in guide.finalParagraphs"
                 :key="paragraph"
               >
                 {{ paragraph }}
@@ -242,7 +252,7 @@ onBeforeUnmount(() => {
               <div class="flex gap-4">
                 <span class="mt-1 h-10 w-1 shrink-0 rounded-full bg-[#8B7449]" />
                 <p class="text-[16px] font-medium leading-7 text-[#24231F] sm:text-[17px] sm:leading-8">
-                  {{ closingText }}
+                  {{ guide.closingText }}
                 </p>
               </div>
             </div>
@@ -252,7 +262,7 @@ onBeforeUnmount(() => {
 
       <div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <article
-          v-for="(metric, index) in metrics"
+          v-for="(metric, index) in editableMetrics"
           :key="metric.id"
           class="group relative min-h-[118px] overflow-hidden rounded-[1.35rem] border border-white/75 bg-white p-4 shadow-[0_16px_45px_rgba(45,35,20,0.08)] transition-all duration-700 ease-out hover:-translate-y-1 hover:shadow-[0_22px_55px_rgba(45,35,20,0.13)]"
           :class="isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'"

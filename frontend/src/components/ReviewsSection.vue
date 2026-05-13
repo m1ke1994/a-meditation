@@ -1,51 +1,28 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useSiteContentStore } from '../admin/stores/siteContent'
 
 const sectionRef = ref(null)
 const isVisible = ref(false)
 const activeIndex = ref(0)
+const contentStore = useSiteContentStore()
+const reviewsContent = computed(() => contentStore.content.reviews)
 
-const reviewsUrl = 'https://t.me/leelabirdcase'
+const reviewsUrl = computed(() => reviewsContent.value.url)
+const reviews = computed(() => reviewsContent.value.items || [])
 
-const reviews = [
-  {
-    name: 'Участница игры',
-    date: 'Отзыв из Telegram',
-    avatar: '/images/IMG_1245.JPG',
-    text: 'Я все хотела написать отзыв об игре. Да вот только игра — это не какая-то точка, в которую ты пришел и всё разрешилось. Это мыслительный процесс, уходящий глубоко в душу, где не все и не всегда на своих местах. Писать отзыв на эту игру все равно что писать отзыв на жизнь, которую еще живешь. Я пока что в процессе проживания, и это временами тяжело, а временами прекрасно. А тебе большое спасибо как проводнику. Ты здорово ведешь туда, куда надо, давая при этом выбор.',
-  },
-  {
-    name: 'Участница игры',
-    date: 'Отзыв из Telegram',
-    avatar: '/images/IMG_1246.JPG',
-    text: 'Ольга, просто нет слов. Меня переполняют эмоции, я пошла гулять, дышать, осознавать. Инсайты меня будут догонять ещё несколько дней точно. Спасибо огромное за такую комфортную игру! Обсуждали довольно личные вещи, но мне было комфортно проговаривать их. Ты всё мне разъясняла, отвечала на вопросы, для меня это важно. Платформа тоже хорошая, красивая. В общем, я исполнила свою мечту — поиграть в Лилу.',
-  },
-  {
-    name: 'Участница игры',
-    date: 'Отзыв из Telegram',
-    avatar: '/images/IMG_1249.JPG',
-    text: 'Если коротко — это было волшебно. А если чуть подробнее — 4 часа пролетели как одно дыхание. Игра помогла не просто «о чём-то задуматься», а реально подсветила глубинные вещи: и то, что тормозит, и то, куда стоит смело идти. Каждый ход был как разговор с собой — честный, порой неожиданный. А Ольга в этом процессе была не просто ведущей, а надёжным проводником. Очень тонко чувствует, мягко направляет, но при этом уверенно держит пространство. Благодаря ей я начала видеть и чувствовать то, что раньше оставалось где-то в тени. Для меня это была встреча с собой настоящей. Я почувствовала свою эмоциональность, которую обычно держу в узде. А тут — как будто можно было быть собой на 100%. Спасибо тебе, Оля, за эту атмосферу, энергию и чуткость. Игра дала мне ответы, которые я долго искала — и я точно хочу ещё.',
-  },
-  {
-    name: 'Участница игры',
-    date: 'Отзыв из Telegram',
-    avatar: '/images/IMG_1988.JPG',
-    text: 'Игра Лила стала для меня очень глубоким опытом. В процессе я увидела важные внутренние связи, которые раньше не замечала. Было спокойно, бережно и честно. Спасибо Ольге за пространство, в котором можно было говорить открыто, чувствовать себя в безопасности и постепенно приходить к ясности.',
-  },
-]
-
-const activeReview = computed(() => reviews[activeIndex.value])
+const activeReview = computed(() => reviews.value[activeIndex.value] || reviews.value[0] || {})
 
 let observer
 let touchStartX = 0
 let touchDeltaX = 0
 
 const nextReview = () => {
-  activeIndex.value = (activeIndex.value + 1) % reviews.length
+  activeIndex.value = (activeIndex.value + 1) % Math.max(reviews.value.length, 1)
 }
 
 const prevReview = () => {
-  activeIndex.value = activeIndex.value === 0 ? reviews.length - 1 : activeIndex.value - 1
+  activeIndex.value = activeIndex.value === 0 ? reviews.value.length - 1 : activeIndex.value - 1
 }
 
 const setReview = (index) => {
@@ -119,15 +96,15 @@ onBeforeUnmount(() => {
         :class="isVisible ? 'translate-y-0 opacity-100 blur-0' : 'translate-y-6 opacity-0 blur-sm'"
       >
         <span class="mb-4 inline-flex rounded-full border border-[#8B7449]/40 bg-white/70 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#8B7449]">
-          Реальные впечатления
+          {{ reviewsContent.eyebrow }}
         </span>
 
         <h2 class="text-3xl font-semibold leading-tight tracking-[-0.035em] text-[#24231F] sm:text-4xl md:text-5xl">
-          Отзывы участников
+          {{ reviewsContent.title }}
         </h2>
 
         <p class="mt-4 text-base leading-7 text-stone-600 sm:text-lg sm:leading-8">
-          Истории людей, которые прошли Игру Лила и поделились своим опытом, инсайтами и внутренними изменениями.
+          {{ reviewsContent.text }}
         </p>
       </div>
 
