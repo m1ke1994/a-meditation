@@ -13,7 +13,7 @@ const emit = defineEmits(['close'])
 const initialForm = () => ({
   name: '',
   phone: '',
-  date: '',
+  details: '',
 })
 
 const form = ref(initialForm())
@@ -70,10 +70,6 @@ const validateForm = () => {
     nextErrors.phone = 'Введите телефон'
   } else if (!validatePhone(form.value.phone)) {
     nextErrors.phone = 'Проверьте телефон'
-  }
-
-  if (!form.value.date) {
-    nextErrors.date = 'Выберите дату'
   }
 
   errors.value = nextErrors
@@ -263,19 +259,12 @@ onBeforeUnmount(() => {
                 </label>
 
                 <label class="block min-w-0">
-                  <span class="mb-1.5 block text-sm font-medium text-[#24231F]">Желаемая дата</span>
-                  <input
-                    v-model="form.date"
-                    type="date"
-                    class="block box-border w-full min-w-0 max-w-full rounded-2xl border bg-[#F8F3EA] px-4 py-3 text-sm text-[#24231F] outline-none transition focus:border-[#8B7449] focus:bg-white"
-                    :class="errors.date ? 'border-[#8B7449]' : 'border-[#8B7449]/20'"
-                  >
-                  <span
-                    v-if="errors.date"
-                    class="mt-1.5 block text-sm text-[#8B7449]"
-                  >
-                    {{ errors.date }}
-                  </span>
+                  <span class="mb-1.5 block text-sm font-medium text-[#24231F]">Комментарий</span>
+                  <textarea
+                    v-model="form.details"
+                    class="block box-border min-h-28 w-full min-w-0 max-w-full resize-none rounded-2xl border border-[#8B7449]/20 bg-[#F8F3EA] px-4 py-3 text-sm text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449] focus:bg-white"
+                    placeholder="Дата, количество игроков, пожелания"
+                  />
                 </label>
 
                 <div class="flex min-w-0 flex-col gap-3 sm:flex-row">
