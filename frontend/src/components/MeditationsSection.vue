@@ -81,26 +81,26 @@ onBeforeUnmount(() => {
 <template>
   <section
     id="meditations"
-    class="relative isolate scroll-mt-24 overflow-hidden bg-[#f8f3ea] px-5 py-16 text-[#252525] sm:px-6 md:px-8 md:py-24"
+    class="relative isolate scroll-mt-24 overflow-hidden bg-[#F8F3EA] px-5 py-16 text-[#24231F] sm:px-6 md:px-8 md:py-24"
   >
     <div class="pointer-events-none absolute left-[-180px] top-[-120px] -z-10 h-[420px] w-[420px] rounded-full bg-white/80 blur-3xl" />
-    <div class="pointer-events-none absolute bottom-[-180px] right-[-160px] -z-10 h-[460px] w-[460px] rounded-full bg-[#d9c7a3]/35 blur-3xl" />
+    <div class="pointer-events-none absolute bottom-[-180px] right-[-160px] -z-10 h-[460px] w-[460px] rounded-full bg-[#8B7449]/35 blur-3xl" />
 
     <div class="mx-auto max-w-[1220px]">
       <div class="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-end">
         <div>
-          <span class="mb-4 inline-flex rounded-full border border-[#b9a47a]/40 bg-white/70 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#8b7449]">
+          <span class="mb-4 inline-flex rounded-full border border-[#8B7449]/40 bg-white/70 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#8B7449]">
             Практики тишины
           </span>
 
-          <h2 class="text-4xl font-semibold leading-[1.04] tracking-[-0.04em] text-[#1f1d19] sm:text-5xl md:text-6xl">
+          <h2 class="text-4xl font-semibold leading-[1.04] tracking-[-0.04em] text-[#24231F] sm:text-5xl md:text-6xl">
             Медитации
-            <span class="block text-[#8b7449]">для восстановления</span>
+            <span class="block text-[#8B7449]">для восстановления</span>
           </h2>
         </div>
 
         <div class="max-w-2xl lg:justify-self-end">
-          <p class="text-xl font-medium leading-8 text-[#20201d] sm:text-2xl sm:leading-9">
+          <p class="text-xl font-medium leading-8 text-[#24231F] sm:text-2xl sm:leading-9">
             Пространство тишины, бережного внимания и внутренней опоры
           </p>
 
@@ -118,7 +118,7 @@ onBeforeUnmount(() => {
         >
           <button
             type="button"
-            class="relative block h-[330px] w-full cursor-zoom-in overflow-hidden rounded-[1.45rem] bg-[#e9dfcc] text-left"
+            class="relative block h-[330px] w-full cursor-zoom-in overflow-hidden rounded-[1.45rem] bg-[#FBF7EF] text-left"
             :aria-label="`Открыть ${practice.title}`"
             @click="openMedia(practice)"
           >
@@ -144,7 +144,7 @@ onBeforeUnmount(() => {
               >
             </video>
 
-            <div class="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-black/10" />
+            <div class="absolute inset-0 bg-black/0 transition duration-300 group-hover:bg-[#24231F]/10" />
           </button>
         </article>
       </div>
@@ -152,7 +152,7 @@ onBeforeUnmount(() => {
       <div class="mt-8 rounded-[2rem] border border-white/70 bg-white/70 p-6 shadow-[0_20px_65px_rgba(45,35,20,0.08)] backdrop-blur-xl md:p-8">
         <div class="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
           <div>
-            <p class="text-sm font-medium uppercase tracking-[0.22em] text-[#8b7449]">
+            <p class="text-sm font-medium uppercase tracking-[0.22em] text-[#8B7449]">
               Формат практики
             </p>
 
@@ -163,7 +163,7 @@ onBeforeUnmount(() => {
 
           <button
             type="button"
-            class="inline-flex items-center justify-center rounded-full bg-[#24392f] px-6 py-4 text-sm font-medium text-white shadow-lg shadow-[#24392f]/15 transition duration-300 hover:-translate-y-0.5 hover:bg-[#1E7D8B] hover:shadow-[0_16px_40px_rgba(30,125,139,0.22)]"
+            class="inline-flex items-center justify-center rounded-full bg-[#24231F] px-6 py-4 text-sm font-medium text-white shadow-lg shadow-[#24231F]/15 transition duration-300 hover:-translate-y-0.5 hover:bg-[#8B7449] hover:shadow-[0_16px_40px_rgba(139,116,73,0.18)]"
             @click="goToMeditationsPricing"
           >
             Выбрать практику
@@ -181,7 +181,7 @@ onBeforeUnmount(() => {
         >
           <button
             type="button"
-            class="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white shadow-2xl backdrop-blur-xl transition duration-300 hover:scale-105 hover:bg-white hover:text-black sm:right-6 sm:top-6"
+            class="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white shadow-2xl backdrop-blur-xl transition duration-300 hover:scale-105 hover:bg-white hover:text-[#24231F] sm:right-6 sm:top-6"
             aria-label="Закрыть просмотр"
             @click.stop="closeMedia"
           >

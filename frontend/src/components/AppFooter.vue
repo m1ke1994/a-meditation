@@ -167,10 +167,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <footer class="relative overflow-hidden border-t border-white/10 bg-[linear-gradient(115deg,#08798b_0%,#047382_42%,#046876_68%,#075866_100%)] text-stone-100">
-    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(255,255,255,0.18),transparent_32%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(0,42,48,0.18))]" />
-    <div class="pointer-events-none absolute inset-x-0 bottom-0 h-7 bg-[linear-gradient(180deg,transparent,rgba(2,32,38,0.52))]" />
-
+  <footer class="relative overflow-hidden border-t border-white/10 bg-[#24231F] text-white">
+        
     <div class="relative mx-auto max-w-[1280px] px-6 py-10 md:px-8 md:py-12">
     <div class="grid gap-10 md:grid-cols-3 md:items-start md:justify-items-center">
         <!-- Logo -->
@@ -192,7 +190,7 @@ onBeforeUnmount(() => {
             <span>МОСКВА</span>
           </RouterLink>
 
-          <p class="text-sm leading-6 text-stone-200/78">
+          <p class="text-sm leading-6 text-white/70">
             © 2025 All rights reserved.
           </p>
         </div>
@@ -203,12 +201,12 @@ onBeforeUnmount(() => {
             Навигация
           </h2>
 
-          <nav class="flex flex-col gap-2.5 text-sm text-stone-200/78">
+          <nav class="flex flex-col gap-2.5 text-sm text-white/70">
             <button
               v-for="item in navLinks"
               :key="item.target"
               type="button"
-              class="w-fit text-left transition hover:translate-x-0.5 hover:text-white"
+              class="w-fit text-left transition hover:translate-x-0.5 hover:text-[#8B7449]"
               @click="scrollToSection(item.target)"
             >
               {{ item.label }}
@@ -222,12 +220,12 @@ onBeforeUnmount(() => {
             Контакты
           </h2>
 
-          <nav class="flex flex-col gap-2.5 text-sm text-stone-200/78">
+          <nav class="flex flex-col gap-2.5 text-sm text-white/70">
             <button
               v-for="item in contactLinks"
               :key="item.label"
               type="button"
-              class="w-fit text-left transition hover:translate-x-0.5 hover:text-white"
+              class="w-fit text-left transition hover:translate-x-0.5 hover:text-[#8B7449]"
               @click="item.target ? scrollToSection(item.target) : null"
             >
               {{ item.label }}
@@ -236,7 +234,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <div class="mt-9 border-t border-white pt-5 text-sm leading-6 text-stone-100/80">
+      <div class="mt-9 border-t border-white pt-5 text-sm leading-6 text-white/75">
         Игра Лила в Москве — путь к ясности через честный диалог с собой.
       </div>
     </div>

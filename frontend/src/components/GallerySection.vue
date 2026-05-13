@@ -57,15 +57,15 @@ onBeforeUnmount(() => {
 <template>
   <section
     id="gallery"
-    class="bg-white px-6 py-16 text-[#242424] md:px-8 md:py-20"
+    class="bg-[#F8F3EA] px-6 py-16 text-[#24231F] md:px-8 md:py-20"
   >
     <div class="mx-auto max-w-[1200px]">
       <div class="mx-auto max-w-[760px] text-center">
-        <p class="mb-3 text-xs font-medium uppercase tracking-[0.28em] text-[#1E7D8B]/60">
+        <p class="mb-3 text-xs font-medium uppercase tracking-[0.28em] text-[#8B7449]/60">
           Визуальная история
         </p>
 
-        <h2 class="text-4xl font-semibold leading-tight tracking-[0.01em] text-[#20201d] sm:text-5xl md:text-6xl">
+        <h2 class="text-4xl font-semibold leading-tight tracking-[0.01em] text-[#24231F] sm:text-5xl md:text-6xl">
           Галерея
         </h2>
 
@@ -78,7 +78,7 @@ onBeforeUnmount(() => {
         <article
           v-for="item in galleryItems"
           :key="item.src"
-          class="group relative h-[280px] overflow-hidden rounded-3xl bg-stone-100 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(0,0,0,0.12)] sm:h-[300px] lg:h-[280px]"
+          class="group relative h-[280px] overflow-hidden rounded-3xl bg-[#FBF7EF] shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(0,0,0,0.12)] sm:h-[300px] lg:h-[280px]"
         >
           <button
             type="button"
@@ -93,7 +93,7 @@ onBeforeUnmount(() => {
               loading="lazy"
             >
 
-            <div class="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/55 via-black/25 to-black/10 px-6 text-center opacity-0 transition duration-300 group-hover:opacity-100">
+            <div class="absolute inset-0 flex items-center justify-center bg-black/35 px-6 text-center opacity-0 transition duration-300 group-hover:opacity-100">
               <h3 class="text-lg font-semibold leading-7 text-white drop-shadow-sm">
                 {{ item.title }}
               </h3>
@@ -112,7 +112,7 @@ onBeforeUnmount(() => {
         >
           <button
             type="button"
-            class="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white shadow-2xl backdrop-blur-xl transition duration-300 hover:scale-105 hover:bg-white hover:text-black sm:right-6 sm:top-6"
+            class="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white shadow-2xl backdrop-blur-xl transition duration-300 hover:scale-105 hover:bg-white hover:text-[#24231F] sm:right-6 sm:top-6"
             aria-label="Закрыть просмотр"
             @click.stop="closeMedia"
           >

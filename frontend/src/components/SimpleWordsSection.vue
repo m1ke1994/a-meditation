@@ -93,7 +93,7 @@ const scrollToCard = (type, index) => {
 <template>
   <section
     id="simple-words"
-    class="scroll-mt-24 bg-white px-6 py-20 text-[#242424] md:px-8 md:py-24"
+    class="scroll-mt-24 bg-[#F8F3EA] px-6 py-20 text-[#24231F] md:px-8 md:py-24"
   >
     <div class="mx-auto max-w-[1200px]">
       <div>
@@ -102,7 +102,7 @@ const scrollToCard = (type, index) => {
             Понятно и бережно
           </p>
 
-          <h2 class="text-4xl font-semibold leading-tight tracking-[0.01em] text-[#20201d] sm:text-5xl md:text-6xl">
+          <h2 class="text-4xl font-semibold leading-tight tracking-[0.01em] text-[#24231F] sm:text-5xl md:text-6xl">
             Лила простыми словами
           </h2>
 
@@ -122,10 +122,10 @@ const scrollToCard = (type, index) => {
               <span class="text-xs font-semibold tracking-[0.22em] text-black/35">
                 {{ card.number }}
               </span>
-              <span class="h-2 w-2 rounded-full bg-[#1E7D8B]/35 transition group-hover:bg-[#0C5865]/70" />
+              <span class="h-2 w-2 rounded-full bg-[#8B7449]/35 transition group-hover:bg-[#24231F]/70" />
             </div>
 
-            <h3 class="text-xl font-semibold leading-7 text-[#24231f]">
+            <h3 class="text-xl font-semibold leading-7 text-[#24231F]">
               {{ card.title }}
             </h3>
             <p class="mt-5 text-base leading-7 text-stone-600">
@@ -136,7 +136,7 @@ const scrollToCard = (type, index) => {
 
         <div class="mt-10 md:hidden">
           <div class="mb-4 flex items-center justify-between">
-            <p class="text-xs font-medium uppercase tracking-[0.22em] text-[#1E7D8B]/70">
+            <p class="text-xs font-medium uppercase tracking-[0.22em] text-[#8B7449]/70">
               Листайте карточки
             </p>
             <div class="flex items-center gap-2 text-xs text-stone-500">
@@ -162,10 +162,10 @@ const scrollToCard = (type, index) => {
                 <span class="text-xs font-semibold tracking-[0.22em] text-black/35">
                   {{ card.number }}
                 </span>
-                <span class="h-2 w-2 rounded-full bg-[#1E7D8B]/60" />
+                <span class="h-2 w-2 rounded-full bg-[#8B7449]/60" />
               </div>
 
-              <h3 class="text-2xl font-semibold leading-8 text-[#24231f]">
+              <h3 class="text-2xl font-semibold leading-8 text-[#24231F]">
                 {{ card.title }}
               </h3>
               <p class="mt-5 text-base leading-7 text-stone-600">
@@ -180,7 +180,7 @@ const scrollToCard = (type, index) => {
               :key="index"
               type="button"
               class="h-2.5 rounded-full transition-all duration-300"
-              :class="activeSimpleIndex === index ? 'w-8 bg-[#1E7D8B]' : 'w-2.5 bg-black/20 hover:bg-[#0C5865]/45'"
+              :class="activeSimpleIndex === index ? 'w-8 bg-[#8B7449]' : 'w-2.5 bg-black/20 hover:bg-[#24231F]/45'"
               :aria-label="`Показать карточку ${index + 1}`"
               @click="scrollToCard('simple', index)"
             />
@@ -194,7 +194,7 @@ const scrollToCard = (type, index) => {
             Процесс
           </p>
 
-          <h2 class="mt-3 text-3xl font-semibold uppercase leading-tight tracking-[0.08em] text-[#20201d] sm:text-4xl md:text-5xl">
+          <h2 class="mt-3 text-3xl font-semibold uppercase leading-tight tracking-[0.08em] text-[#24231F] sm:text-4xl md:text-5xl">
             Как проходит Лила?
           </h2>
         </div>
@@ -205,10 +205,10 @@ const scrollToCard = (type, index) => {
             :key="card.title"
             class="group min-h-[240px] rounded-2xl border border-black/10 bg-white p-6 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_55px_rgba(0,0,0,0.09)]"
           >
-            <div class="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-black/10 bg-white text-xs font-semibold tracking-[0.18em] text-[#1E7D8B] shadow-sm transition group-hover:border-[#0C5865]/25 group-hover:text-[#0C5865]">
+            <div class="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-black/10 bg-white text-xs font-semibold tracking-[0.18em] text-[#8B7449] shadow-sm transition group-hover:border-[#24231F]/25 group-hover:text-[#24231F]">
               {{ card.icon }}
             </div>
-            <h3 class="text-lg font-semibold leading-7 text-[#24231f]">
+            <h3 class="text-lg font-semibold leading-7 text-[#24231F]">
               {{ card.title }}
             </h3>
             <p class="mt-4 text-sm leading-6 text-stone-600">
@@ -219,7 +219,7 @@ const scrollToCard = (type, index) => {
 
         <div class="mt-10 md:hidden">
           <div class="mb-4 flex items-center justify-between">
-            <p class="text-xs font-medium uppercase tracking-[0.22em] text-[#1E7D8B]/70">
+            <p class="text-xs font-medium uppercase tracking-[0.22em] text-[#8B7449]/70">
               Свайпните процесс
             </p>
             <div class="flex items-center gap-2 text-xs text-stone-500">
@@ -241,10 +241,10 @@ const scrollToCard = (type, index) => {
               data-swipe-card
               class="min-h-[260px] w-[86vw] shrink-0 snap-center rounded-3xl border border-black/10 bg-white p-7 text-center shadow-[0_20px_55px_rgba(0,0,0,0.08)]"
             >
-              <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-black/10 bg-white text-xs font-semibold tracking-[0.18em] text-[#1E7D8B] shadow-sm">
+              <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-black/10 bg-white text-xs font-semibold tracking-[0.18em] text-[#8B7449] shadow-sm">
                 {{ card.icon }}
               </div>
-              <h3 class="text-xl font-semibold leading-7 text-[#24231f]">
+              <h3 class="text-xl font-semibold leading-7 text-[#24231F]">
                 {{ card.title }}
               </h3>
               <p class="mt-4 text-base leading-7 text-stone-600">
@@ -259,7 +259,7 @@ const scrollToCard = (type, index) => {
               :key="index"
               type="button"
               class="h-2.5 rounded-full transition-all duration-300"
-              :class="activeProcessIndex === index ? 'w-8 bg-[#1E7D8B]' : 'w-2.5 bg-black/20 hover:bg-[#0C5865]/45'"
+              :class="activeProcessIndex === index ? 'w-8 bg-[#8B7449]' : 'w-2.5 bg-black/20 hover:bg-[#24231F]/45'"
               :aria-label="`Показать этап ${index + 1}`"
               @click="scrollToCard('process', index)"
             />

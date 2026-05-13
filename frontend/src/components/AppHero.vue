@@ -75,7 +75,7 @@ onUnmounted(() => {
 <template>
   <section
     ref="heroRef"
-    class="relative isolate flex min-h-screen items-center overflow-hidden bg-zinc-950 pt-16 text-white md:pt-[72px]"
+    class="relative isolate flex min-h-screen items-center overflow-hidden bg-[#24231F] pt-16 text-white md:pt-[72px]"
   >
     <video
       ref="videoRef"
@@ -93,8 +93,8 @@ onUnmounted(() => {
     </video>
 
     <div class="absolute inset-0 -z-10 bg-black/10" />
-    <div class="absolute inset-0 -z-10 bg-gradient-to-r from-black/40 via-black/12 to-white/18" />
-    <div class="absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-t from-zinc-950/24 to-transparent" />
+    <div class="absolute inset-0 -z-10 bg-black/20" />
+    
 
     <div class="mx-auto w-full max-w-[1280px] px-6 py-20 md:px-8">
       <div class="max-w-[760px]">

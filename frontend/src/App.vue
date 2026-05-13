@@ -12,7 +12,7 @@ import ContactSection from './components/ContactSection.vue'
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col bg-white text-slate-950">
+  <div class="flex min-h-screen flex-col bg-[#F8F3EA] text-[#24231F]">
     <AppHeader />
     <main class="flex-1">
       <AppHero />

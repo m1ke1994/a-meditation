@@ -212,15 +212,15 @@ onBeforeUnmount(() => {
 <template>
   <header
     class="fixed left-0 top-0 z-50 w-full border-b border-white/10 text-white transition duration-300"
-    :class="hasScrolled ? 'bg-zinc-950/[0.78] shadow-2xl shadow-black/25 backdrop-blur-2xl' : 'bg-zinc-900/[0.58] shadow-lg shadow-black/10 backdrop-blur-xl'"
+    :class="hasScrolled ? 'bg-[#24231F]/90 shadow-2xl shadow-black/25 backdrop-blur-2xl' : 'bg-[#24231F]/80 shadow-lg shadow-black/10 backdrop-blur-xl'"
   >
     <div class="mx-auto grid h-16 max-w-[1280px] grid-cols-[1fr_auto_1fr] items-center px-6 md:h-[72px] md:px-8">
-      <nav class="hidden items-center justify-start gap-5 text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-200 md:flex lg:gap-6 xl:gap-7">
+      <nav class="hidden items-center justify-start gap-5 text-[11px] font-medium uppercase tracking-[0.18em] text-white/80 md:flex lg:gap-6 xl:gap-7">
         <a
           v-for="item in leftMenuItems"
           :key="item.label"
           href="#"
-          class="transition hover:text-white hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.22)]"
+          class="transition hover:text-[#8B7449]"
           @click.prevent="scrollToSection(item)"
         >
           {{ item.label }}
@@ -243,12 +243,12 @@ onBeforeUnmount(() => {
         <span>МОСКВА</span>
       </RouterLink>
 
-      <nav class="hidden items-center justify-end gap-5 text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-200 md:flex lg:gap-6 xl:gap-7">
+      <nav class="hidden items-center justify-end gap-5 text-[11px] font-medium uppercase tracking-[0.18em] text-white/80 md:flex lg:gap-6 xl:gap-7">
         <a
           v-for="item in rightMenuItems"
           :key="item.label"
           href="#"
-          class="transition hover:text-white hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.22)]"
+          class="transition hover:text-[#8B7449]"
           @click.prevent="scrollToSection(item)"
         >
           {{ item.label }}
@@ -291,13 +291,13 @@ onBeforeUnmount(() => {
       <nav
         v-if="isOpen"
         id="mobile-menu"
-        class="mx-4 mb-4 flex flex-col gap-1 rounded-3xl border border-white/10 bg-zinc-950/[0.88] px-5 py-5 text-center text-sm font-medium uppercase tracking-[0.2em] text-white shadow-2xl shadow-black/35 backdrop-blur-2xl md:hidden"
+        class="mx-4 mb-4 flex flex-col gap-1 rounded-3xl border border-white/10 bg-[#24231F]/95 px-5 py-5 text-center text-sm font-medium uppercase tracking-[0.2em] text-white shadow-2xl shadow-black/35 backdrop-blur-2xl md:hidden"
       >
         <a
           v-for="item in mobileMenuItems"
           :key="item.label"
           href="#"
-          class="rounded-2xl px-4 py-3 text-zinc-200 transition hover:bg-white/10 hover:text-white"
+          class="rounded-2xl px-4 py-3 text-white/80 transition hover:bg-white/10 hover:text-[#8B7449]"
           @click.prevent="scrollToSection(item)"
         >
           {{ item.label }}

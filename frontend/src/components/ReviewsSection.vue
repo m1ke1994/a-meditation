@@ -108,21 +108,21 @@ onBeforeUnmount(() => {
   <section
     id="reviews"
     ref="sectionRef"
-    class="relative scroll-mt-24 overflow-hidden bg-[#f8f3ea] px-5 py-16 text-[#252525] sm:px-6 md:px-8 md:py-24"
+    class="relative scroll-mt-24 overflow-hidden bg-[#F8F3EA] px-5 py-16 text-[#24231F] sm:px-6 md:px-8 md:py-24"
   >
     <div class="pointer-events-none absolute -left-36 top-10 h-80 w-80 rounded-full bg-white/75 blur-3xl" />
-    <div class="pointer-events-none absolute -right-40 bottom-0 h-96 w-96 rounded-full bg-[#d9c7a3]/35 blur-3xl" />
+    <div class="pointer-events-none absolute -right-40 bottom-0 h-96 w-96 rounded-full bg-[#8B7449]/35 blur-3xl" />
 
     <div class="relative mx-auto max-w-[1120px]">
       <div
         class="mx-auto max-w-[760px] text-center transition-all duration-1000 ease-out"
         :class="isVisible ? 'translate-y-0 opacity-100 blur-0' : 'translate-y-6 opacity-0 blur-sm'"
       >
-        <span class="mb-4 inline-flex rounded-full border border-[#b9a47a]/40 bg-white/70 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#8b7449]">
+        <span class="mb-4 inline-flex rounded-full border border-[#8B7449]/40 bg-white/70 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#8B7449]">
           Реальные впечатления
         </span>
 
-        <h2 class="text-3xl font-semibold leading-tight tracking-[-0.035em] text-[#20201d] sm:text-4xl md:text-5xl">
+        <h2 class="text-3xl font-semibold leading-tight tracking-[-0.035em] text-[#24231F] sm:text-4xl md:text-5xl">
           Отзывы участников
         </h2>
 
@@ -140,7 +140,7 @@ onBeforeUnmount(() => {
       >
         <button
           type="button"
-          class="absolute left-0 top-1/2 z-10 hidden h-12 w-12 -translate-x-16 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white text-2xl text-[#8b7449] shadow-lg transition hover:-translate-x-[4.25rem] hover:bg-[#24392f] hover:text-white md:flex"
+          class="absolute left-0 top-1/2 z-10 hidden h-12 w-12 -translate-x-16 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white text-2xl text-[#8B7449] shadow-lg transition hover:-translate-x-[4.25rem] hover:bg-[#24231F] hover:text-white md:flex"
           aria-label="Предыдущий отзыв"
           @click="prevReview"
         >
@@ -152,7 +152,7 @@ onBeforeUnmount(() => {
             :key="`${activeReview.name}-${activeIndex}`"
             class="relative flex min-h-[430px] flex-col overflow-hidden rounded-[2rem] border border-white/75 bg-white/82 p-6 shadow-[0_26px_80px_rgba(45,35,20,0.12)] backdrop-blur-xl sm:p-8 md:min-h-[460px] md:p-10"
           >
-            <div class="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-[#e7dcc6]/70" />
+            <div class="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-[#8B7449]/70" />
 
             <div class="relative flex items-center gap-4">
               <img
@@ -162,7 +162,7 @@ onBeforeUnmount(() => {
               >
 
               <div>
-                <h3 class="text-lg font-semibold leading-7 text-[#22211e] md:text-xl">
+                <h3 class="text-lg font-semibold leading-7 text-[#24231F] md:text-xl">
                   {{ activeReview.name }}
                 </h3>
 
@@ -178,10 +178,10 @@ onBeforeUnmount(() => {
               </p>
             </div>
 
-            <div class="relative mt-7 h-px w-full bg-gradient-to-r from-[#8b7449]/30 via-black/10 to-transparent" />
+            <div class="relative mt-7 h-px w-full bg-[#8B7449]/30" />
 
             <div class="relative mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p class="text-xs font-medium uppercase tracking-[0.22em] text-stone-400">
+              <p class="text-xs font-medium uppercase tracking-[0.22em] text-stone-500">
                 {{ activeIndex + 1 }} / {{ reviews.length }}
               </p>
 
@@ -189,7 +189,7 @@ onBeforeUnmount(() => {
                 :href="reviewsUrl"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center justify-center gap-2 rounded-full bg-[#24392f] px-5 py-3 text-sm font-medium text-white shadow-lg shadow-[#24392f]/15 transition duration-300 hover:-translate-y-0.5 hover:bg-[#1E7D8B] hover:shadow-[0_16px_40px_rgba(30,125,139,0.22)]"
+                class="inline-flex items-center justify-center gap-2 rounded-full bg-[#24231F] px-5 py-3 text-sm font-medium text-white shadow-lg shadow-[#24231F]/15 transition duration-300 hover:-translate-y-0.5 hover:bg-[#8B7449] hover:shadow-[0_16px_40px_rgba(139,116,73,0.18)]"
               >
                 Читать больше отзывов
                 <svg
@@ -212,7 +212,7 @@ onBeforeUnmount(() => {
 
         <button
           type="button"
-          class="absolute right-0 top-1/2 z-10 hidden h-12 w-12 translate-x-16 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white text-2xl text-[#8b7449] shadow-lg transition hover:translate-x-[4.25rem] hover:bg-[#24392f] hover:text-white md:flex"
+          class="absolute right-0 top-1/2 z-10 hidden h-12 w-12 translate-x-16 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white text-2xl text-[#8B7449] shadow-lg transition hover:translate-x-[4.25rem] hover:bg-[#24231F] hover:text-white md:flex"
           aria-label="Следующий отзыв"
           @click="nextReview"
         >
@@ -226,13 +226,13 @@ onBeforeUnmount(() => {
           :key="index"
           type="button"
           class="h-2.5 rounded-full transition-all duration-300"
-          :class="activeIndex === index ? 'w-8 bg-[#8b7449]' : 'w-2.5 bg-black/20 hover:bg-[#8b7449]/45'"
+          :class="activeIndex === index ? 'w-8 bg-[#8B7449]' : 'w-2.5 bg-black/20 hover:bg-[#8B7449]/45'"
           :aria-label="`Показать отзыв ${index + 1}`"
           @click="setReview(index)"
         />
       </div>
 
-      <p class="mt-4 text-center text-xs font-medium uppercase tracking-[0.22em] text-stone-400 md:hidden">
+      <p class="mt-4 text-center text-xs font-medium uppercase tracking-[0.22em] text-stone-500 md:hidden">
         листайте отзывы
       </p>
     </div>

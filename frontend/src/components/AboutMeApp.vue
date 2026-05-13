@@ -146,20 +146,20 @@ onBeforeUnmount(() => {
   <section
     id="guide"
     ref="sectionRef"
-    class="relative scroll-mt-24 overflow-hidden bg-[#f8f3ea] px-5 py-12 text-[#252525] sm:px-6 md:px-8 md:py-16"
+    class="relative scroll-mt-24 overflow-hidden bg-[#F8F3EA] px-5 py-12 text-[#24231F] sm:px-6 md:px-8 md:py-16"
   >
     <div class="pointer-events-none absolute left-[-160px] top-[-160px] h-[360px] w-[360px] rounded-full bg-white/80 blur-3xl" />
-    <div class="pointer-events-none absolute bottom-[-180px] right-[-140px] h-[420px] w-[420px] rounded-full bg-[#d9c7a3]/30 blur-3xl" />
+    <div class="pointer-events-none absolute bottom-[-180px] right-[-140px] h-[420px] w-[420px] rounded-full bg-[#8B7449]/30 blur-3xl" />
 
     <div class="relative mx-auto max-w-[1120px]">
       <div class="mb-7 max-w-3xl">
-        <span class="mb-3 inline-flex rounded-full border border-[#b9a47a]/40 bg-white/70 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#8b7449]">
+        <span class="mb-3 inline-flex rounded-full border border-[#8B7449]/40 bg-white/70 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#8B7449]">
           Проводник игры Лила
         </span>
 
-        <h2 class="text-3xl font-semibold leading-[1.04] tracking-[-0.04em] text-[#1f1d19] sm:text-4xl md:text-5xl">
+        <h2 class="text-3xl font-semibold leading-[1.04] tracking-[-0.04em] text-[#24231F] sm:text-4xl md:text-5xl">
           Ольга Бердникова
-          <span class="block text-[#8b7449]">Leelabird</span>
+          <span class="block text-[#8B7449]">Leelabird</span>
         </h2>
       </div>
 
@@ -175,7 +175,7 @@ onBeforeUnmount(() => {
               class="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.03]"
             >
 
-            <div class="absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent" />
+            <div class="absolute inset-0 bg-black/20" />
 
             <div class="absolute bottom-4 left-4 right-4 rounded-2xl border border-white/20 bg-white/18 p-4 text-white shadow-2xl backdrop-blur-xl">
               <p class="text-[11px] uppercase tracking-[0.24em] text-white/70">
@@ -212,8 +212,8 @@ onBeforeUnmount(() => {
               </p>
             </div>
 
-            <div class="my-6 rounded-[1.35rem] border border-[#d8c8a8]/50 bg-[#fbf7ef] p-5">
-              <p class="text-[12px] font-medium uppercase tracking-[0.18em] text-[#8b7449]">
+            <div class="my-6 rounded-[1.35rem] border border-[#8B7449]/50 bg-[#FBF7EF] p-5">
+              <p class="text-[12px] font-medium uppercase tracking-[0.18em] text-[#8B7449]">
                 250+ человек уже прошли со мной свою трансформацию:
               </p>
 
@@ -223,7 +223,7 @@ onBeforeUnmount(() => {
                   :key="item"
                   class="flex gap-3 text-[14px] leading-6 text-stone-700"
                 >
-                  <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#9f8554]" />
+                  <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#8B7449]" />
                   <span>{{ item }}</span>
                 </li>
               </ul>
@@ -238,10 +238,10 @@ onBeforeUnmount(() => {
               </p>
             </div>
 
-            <div class="mt-6 rounded-[1.35rem] border border-[#9f8554]/25 bg-[#f4ead7] p-5 shadow-inner shadow-white/40">
+            <div class="mt-6 rounded-[1.35rem] border border-[#8B7449]/25 bg-[#FBF7EF] p-5 shadow-inner shadow-white/40">
               <div class="flex gap-4">
-                <span class="mt-1 h-10 w-1 shrink-0 rounded-full bg-[#9f8554]" />
-                <p class="text-[16px] font-medium leading-7 text-[#2a261f] sm:text-[17px] sm:leading-8">
+                <span class="mt-1 h-10 w-1 shrink-0 rounded-full bg-[#8B7449]" />
+                <p class="text-[16px] font-medium leading-7 text-[#24231F] sm:text-[17px] sm:leading-8">
                   {{ closingText }}
                 </p>
               </div>
@@ -258,9 +258,9 @@ onBeforeUnmount(() => {
           :class="isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'"
           :style="{ transitionDelay: `${320 + index * 110}ms` }"
         >
-          <div class="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full bg-[#e7dcc6]" />
+          <div class="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full bg-[#8B7449]" />
 
-          <span class="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#24392f] text-white shadow-lg shadow-[#24392f]/20 transition duration-300 group-hover:scale-105 group-hover:bg-[#1E7D8B]">
+          <span class="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#24231F] text-white shadow-lg shadow-[#24231F]/20 transition duration-300 group-hover:scale-105 group-hover:bg-[#8B7449]">
             <svg
               viewBox="0 0 24 24"
               class="h-5 w-5"
@@ -276,7 +276,7 @@ onBeforeUnmount(() => {
           </span>
 
           <div class="relative mt-4">
-            <span class="block text-2xl font-semibold leading-none tracking-[-0.035em] text-[#24231f]">
+            <span class="block text-2xl font-semibold leading-none tracking-[-0.035em] text-[#24231F]">
               {{ metricValue(metric) }}
             </span>
 

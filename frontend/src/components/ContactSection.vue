@@ -126,7 +126,7 @@ onBeforeUnmount(() => {
 <template>
   <section
     id="contacts"
-    class="scroll-mt-24 bg-white px-6 py-16 text-[#242424] md:px-8 md:py-20"
+    class="scroll-mt-24 bg-[#F8F3EA] px-6 py-16 text-[#24231F] md:px-8 md:py-20"
   >
     <div class="mx-auto max-w-[1200px]">
       <!-- Header -->
@@ -135,7 +135,7 @@ onBeforeUnmount(() => {
           Связаться с нами
         </p>
 
-        <h2 class="text-3xl font-semibold leading-tight tracking-[0.02em] text-[#20201d] sm:text-4xl md:text-5xl">
+        <h2 class="text-3xl font-semibold leading-tight tracking-[0.02em] text-[#24231F] sm:text-4xl md:text-5xl">
           Контакты и запись на игру
         </h2>
 
@@ -149,7 +149,7 @@ onBeforeUnmount(() => {
         
         <!-- FORM -->
         <div class="rounded-[2rem] border border-black/10 bg-white p-6 shadow-[0_25px_80px_rgba(0,0,0,0.06)] md:p-8">
-          <h3 class="text-2xl font-semibold text-[#20201d]">
+          <h3 class="text-2xl font-semibold text-[#24231F]">
             Форма обратной связи
           </h3>
 
@@ -162,7 +162,7 @@ onBeforeUnmount(() => {
               v-model="form.name"
               type="text"
               placeholder="ФИО"
-              class="w-full rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#1f1f1f] outline-none transition placeholder:text-stone-400 focus:border-black/30"
+              class="w-full rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449]/60"
             >
 
             <input
@@ -170,21 +170,21 @@ onBeforeUnmount(() => {
               type="tel"
               placeholder="Телефон *"
               required
-              class="w-full rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#1f1f1f] outline-none transition placeholder:text-stone-400 focus:border-black/30"
+              class="w-full rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449]/60"
             >
 
             <input
               v-model="form.telegram"
               type="text"
               placeholder="Telegram"
-              class="w-full rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#1f1f1f] outline-none transition placeholder:text-stone-400 focus:border-black/30"
+              class="w-full rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449]/60"
             >
 
             <textarea
               v-model="form.message"
               rows="5"
               placeholder="Дата, количество игроков, пожелания"
-              class="w-full resize-none rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#1f1f1f] outline-none transition placeholder:text-stone-400 focus:border-black/30"
+              class="w-full resize-none rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449]/60"
             />
 
             <label class="flex gap-3 text-xs leading-5 text-stone-500">
@@ -192,7 +192,7 @@ onBeforeUnmount(() => {
                 v-model="form.agree"
                 type="checkbox"
                 required
-                class="mt-1 h-4 w-4 rounded border-black/20 accent-black"
+                class="mt-1 h-4 w-4 rounded border-black/20 accent-[#8B7449]"
               >
               <span>
                 Нажимая кнопку «Отправить», я соглашаюсь на обработку персональных данных.
@@ -201,7 +201,7 @@ onBeforeUnmount(() => {
 
             <button
               type="submit"
-              class="w-full rounded-full border border-black/20 px-6 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#20201d] transition duration-300 hover:-translate-y-1 hover:bg-black hover:text-white hover:shadow-lg"
+              class="w-full rounded-full border border-black/20 px-6 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#24231F] transition duration-300 hover:-translate-y-1 hover:bg-[#24231F] hover:text-white hover:shadow-lg"
             >
               Отправить
             </button>
@@ -211,7 +211,7 @@ onBeforeUnmount(() => {
         <!-- MAP + CONTACT -->
         <div class="overflow-hidden rounded-[2rem] border border-black/10 bg-white shadow-[0_25px_80px_rgba(0,0,0,0.06)]">
           <div class="p-6 md:p-8">
-            <h3 class="text-2xl font-semibold text-[#20201d]">
+            <h3 class="text-2xl font-semibold text-[#24231F]">
               Где проходит игра
             </h3>
 
@@ -236,9 +236,9 @@ onBeforeUnmount(() => {
               <div
                 v-for="location in locations"
                 :key="location.title"
-                class="rounded-2xl border border-black/10 bg-[#fbfaf7] px-4 py-3"
+                class="rounded-2xl border border-black/10 bg-[#FBF7EF] px-4 py-3"
               >
-                <p class="text-sm font-semibold text-[#20201d]">
+                <p class="text-sm font-semibold text-[#24231F]">
                   {{ location.title }}
                 </p>
                 <p class="mt-1 text-xs leading-5 text-stone-500">
@@ -248,7 +248,7 @@ onBeforeUnmount(() => {
             </div>
           </div>
 
-          <div class="relative h-[360px] w-full overflow-hidden bg-[#f5f2ed]">
+          <div class="relative h-[360px] w-full overflow-hidden bg-[#FBF7EF]">
             <div
               ref="mapRef"
               class="h-full w-full"
@@ -257,7 +257,7 @@ onBeforeUnmount(() => {
 
             <div
               v-if="mapStatus !== 'ready'"
-              class="absolute inset-0 flex items-center justify-center bg-[#f5f2ed] px-6 text-center text-sm text-stone-500"
+              class="absolute inset-0 flex items-center justify-center bg-[#FBF7EF] px-6 text-center text-sm text-stone-500"
             >
               <span v-if="mapStatus === 'loading'">
                 Загрузка карты...

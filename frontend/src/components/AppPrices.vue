@@ -38,15 +38,15 @@ onBeforeUnmount(() => {
 <template>
   <section
     id="pricing"
-    class="scroll-mt-24 bg-white px-6 py-16 text-[#242424] md:px-8 md:py-20"
+    class="scroll-mt-24 bg-[#F8F3EA] px-6 py-16 text-[#24231F] md:px-8 md:py-20"
   >
     <div class="mx-auto max-w-[1200px]">
       <div class="mx-auto max-w-[760px] text-center">
-        <p class="mb-3 text-xs font-medium uppercase tracking-[0.28em] text-[#1E7D8B]/60">
+        <p class="mb-3 text-xs font-medium uppercase tracking-[0.28em] text-[#8B7449]/60">
           Прайсы
         </p>
 
-        <h2 class="text-3xl font-semibold uppercase leading-tight tracking-[0.08em] text-[#20201d] sm:text-4xl md:text-5xl">
+        <h2 class="text-3xl font-semibold uppercase leading-tight tracking-[0.08em] text-[#24231F] sm:text-4xl md:text-5xl">
           Форматы услуг
         </h2>
 
@@ -55,13 +55,13 @@ onBeforeUnmount(() => {
         </p>
       </div>
 
-      <div class="mx-auto mt-8 flex w-full max-w-[520px] rounded-full border border-black/10 bg-[#f5f2ed] p-1.5 shadow-inner shadow-black/5">
+      <div class="mx-auto mt-8 flex w-full max-w-[520px] rounded-full border border-black/10 bg-[#FBF7EF] p-1.5 shadow-inner shadow-black/5">
         <button
           v-for="group in serviceGroups"
           :key="group.id"
           type="button"
           class="relative min-h-12 flex-1 rounded-full px-4 text-sm font-semibold uppercase tracking-[0.14em] transition duration-300 sm:text-[13px]"
-          :class="activeGroupId === group.id ? 'bg-white text-[#0C5865] shadow-[0_12px_32px_rgba(0,0,0,0.09)]' : 'text-stone-500 hover:text-[#20201d]'"
+          :class="activeGroupId === group.id ? 'bg-white text-[#24231F] shadow-[0_12px_32px_rgba(0,0,0,0.09)]' : 'text-stone-500 hover:text-[#24231F]'"
           :aria-pressed="activeGroupId === group.id"
           @click="activeGroupId = group.id"
         >
@@ -89,9 +89,9 @@ onBeforeUnmount(() => {
           <article
             v-for="item in activeGroup.items"
             :key="item.title"
-            class="group flex min-h-[300px] flex-col rounded-3xl border border-black/10 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1.5 hover:border-[#1E7D8B]/25 hover:shadow-[0_24px_70px_rgba(0,0,0,0.1)]"
+            class="group flex min-h-[300px] flex-col rounded-3xl border border-black/10 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1.5 hover:border-[#8B7449]/25 hover:shadow-[0_24px_70px_rgba(0,0,0,0.1)]"
           >
-            <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#1E7D8B]/8 text-[#1E7D8B] transition duration-300 group-hover:bg-[#0C5865] group-hover:text-white">
+            <div class="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#8B7449]/8 text-[#8B7449] transition duration-300 group-hover:bg-[#24231F] group-hover:text-white">
               <svg
                 v-if="item.icon === 'group'"
                 class="h-7 w-7"
@@ -207,11 +207,11 @@ onBeforeUnmount(() => {
               </svg>
             </div>
 
-            <h3 class="text-xl font-semibold leading-7 text-[#24231f]">
+            <h3 class="text-xl font-semibold leading-7 text-[#24231F]">
               {{ item.title }}
             </h3>
 
-            <p class="mt-3 text-base font-semibold text-[#1E7D8B]">
+            <p class="mt-3 text-base font-semibold text-[#8B7449]">
               {{ item.price }}
             </p>
 
@@ -225,7 +225,7 @@ onBeforeUnmount(() => {
 
             <button
               type="button"
-              class="mt-6 rounded-full border border-[#1E7D8B]/25 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#1E7D8B] transition duration-300 hover:border-[#0C5865] hover:bg-[#0C5865] hover:text-white"
+              class="mt-6 rounded-full border border-[#8B7449]/25 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#8B7449] transition duration-300 hover:border-[#24231F] hover:bg-[#24231F] hover:text-white"
               @click="openOrderModal(item)"
             >
               Записаться
