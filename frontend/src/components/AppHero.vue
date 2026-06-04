@@ -1,16 +1,36 @@
 <script setup>
-import { onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
 
-const heroPosterUrl = '/images/Lila_Olga_2.2.poster.jpg'
-const heroVideoUrl = '/images/Lila_Olga_2.2_compressed.mp4'
+const props = defineProps({
+  section: {
+    type: Object,
+    default: null,
+  },
+})
 
-const heroPhrases = [
+const defaultHeroPhrases = [
   'Игра, которая помогает услышать себя',
   'Пространство для честного внутреннего диалога',
   'Мягкий путь к ясности, решениям и опоре',
   'Лила в Москве — встреча с собой через игру',
   'Когда ответы приходят не из шума, а из тишины',
 ]
+
+const sectionContent = computed(() => props.section?.content || {})
+const heroPosterUrl = computed(() => sectionContent.value.image || '/images/Lila_Olga_2.2.poster.jpg')
+const heroVideoUrl = computed(() => sectionContent.value.background_video || '/images/Lila_Olga_2.2_compressed.mp4')
+const heroPhrases = computed(() => {
+  const phrases = sectionContent.value.phrases
+  return Array.isArray(phrases) && phrases.length > 0 ? phrases : defaultHeroPhrases
+})
+const heroTag = computed(() => sectionContent.value.tag || 'ЛИЛА МОСКВА')
+const heroDescription = computed(
+  () => sectionContent.value.description || 'Практика, где игра становится проводником к ясности, спокойствию и внутренним ответам.',
+)
+const heroPrimaryButtonText = computed(() => sectionContent.value.button_text || 'Записаться на игру')
+const heroPrimaryButtonLink = computed(() => sectionContent.value.button_link || '#contacts')
+const heroSecondaryButtonText = computed(() => sectionContent.value.secondary_button_text || 'Узнать стоимость')
+const heroSecondaryButtonLink = computed(() => sectionContent.value.secondary_button_link || '#pricing')
 
 const heroRef = ref(null)
 const videoRef = ref(null)
@@ -27,7 +47,8 @@ const loadVideo = () => {
 }
 
 const scrollToSection = (targetId) => {
-  document.getElementById(targetId)?.scrollIntoView({
+  const normalizedTarget = String(targetId || '').replace(/^#/, '')
+  document.getElementById(normalizedTarget)?.scrollIntoView({
     behavior: 'smooth',
     block: 'start',
   })
@@ -35,7 +56,7 @@ const scrollToSection = (targetId) => {
 
 onMounted(() => {
   phraseInterval = window.setInterval(() => {
-    activePhraseIndex.value = (activePhraseIndex.value + 1) % heroPhrases.length
+    activePhraseIndex.value = (activePhraseIndex.value + 1) % heroPhrases.value.length
   }, 3800)
 
   if (!heroRef.value) return
@@ -99,7 +120,7 @@ onUnmounted(() => {
     <div class="mx-auto w-full max-w-[1280px] px-6 py-20 md:px-8">
       <div class="max-w-[760px]">
         <p class="mb-5 text-xs font-medium uppercase tracking-[0.28em] text-white/75">
-          ЛИЛА МОСКВА
+          {{ heroTag }}
         </p>
 
         <div class="relative min-h-[220px] sm:min-h-[250px] md:min-h-[300px]">
@@ -114,23 +135,23 @@ onUnmounted(() => {
         </div>
 
         <p class="mt-1 max-w-2xl text-base leading-7 text-white/78 sm:text-lg md:text-xl md:leading-8">
-          Практика, где игра становится проводником к ясности, спокойствию и внутренним ответам.
+          {{ heroDescription }}
         </p>
 
         <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
           <a
             href="#"
             class="inline-flex min-h-12 items-center justify-center rounded-full border border-white/20 bg-white/16 px-7 text-sm font-medium text-white shadow-lg shadow-black/20 backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-white/35 hover:bg-white/22 hover:shadow-[0_18px_45px_rgba(255,255,255,0.13)]"
-            @click.prevent="scrollToSection('contacts')"
+            @click.prevent="scrollToSection(heroPrimaryButtonLink)"
           >
-            Записаться на игру
+            {{ heroPrimaryButtonText }}
           </a>
           <a
             href="#"
             class="inline-flex min-h-12 items-center justify-center rounded-full border border-white/15 bg-black/20 px-7 text-sm font-medium text-white/90 shadow-lg shadow-black/20 backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/12 hover:text-white hover:shadow-[0_18px_45px_rgba(255,255,255,0.1)]"
-            @click.prevent="scrollToSection('pricing')"
+            @click.prevent="scrollToSection(heroSecondaryButtonLink)"
           >
-            Узнать стоимость
+            {{ heroSecondaryButtonText }}
           </a>
         </div>
       </div>

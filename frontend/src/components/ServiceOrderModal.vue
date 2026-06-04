@@ -1,10 +1,15 @@
-<script setup>
+﻿<script setup>
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { submitLead } from '../composables/useLeadApi'
 
 const props = defineProps({
   service: {
     type: Object,
     default: null,
+  },
+  serviceType: {
+    type: String,
+    default: '',
   },
 })
 
@@ -80,23 +85,31 @@ const submitForm = async () => {
   if (!validateForm()) return
 
   isSending.value = true
+  errors.value = {}
 
-  const payload = {
-    service: props.service,
-    ...form.value,
+  try {
+    await submitLead({
+      section_key: 'services',
+      form_name: 'Форма записи на услугу',
+      name: form.value.name.trim(),
+      phone: form.value.phone.trim(),
+      message: form.value.details.trim(),
+      service_type: props.serviceType || '',
+      service_title: props.service?.title || '',
+      payload: {
+        service: props.service || null,
+      },
+    })
+
+    isSubmitted.value = true
+    closeTimer = window.setTimeout(() => {
+      closeModal()
+    }, 1600)
+  } catch (error) {
+    errors.value.submit = error instanceof Error ? error.message : 'Не удалось отправить заявку'
+  } finally {
+    isSending.value = false
   }
-
-  // TODO: подключить отправку заявки в API или Telegram-уведомление.
-  console.log('Service order request:', payload)
-
-  await new Promise((resolve) => window.setTimeout(resolve, 450))
-
-  isSending.value = false
-  isSubmitted.value = true
-
-  closeTimer = window.setTimeout(() => {
-    closeModal()
-  }, 1600)
 }
 
 watch(isOpen, async (value) => {
@@ -276,6 +289,7 @@ onBeforeUnmount(() => {
                     {{ isSending ? 'Отправляем...' : 'Отправить' }}
                   </button>
                 </div>
+                <p v-if="errors.submit" class="text-sm text-[#8B7449]">{{ errors.submit }}</p>
               </form>
             </div>
           </div>
@@ -284,3 +298,4 @@ onBeforeUnmount(() => {
     </Transition>
   </Teleport>
 </template>
+

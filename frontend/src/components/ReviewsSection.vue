@@ -1,13 +1,27 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
+const props = defineProps({
+  section: {
+    type: Object,
+    default: null,
+  },
+})
+
 const sectionRef = ref(null)
 const isVisible = ref(false)
 const activeIndex = ref(0)
 
-const reviewsUrl = 'https://t.me/leelabirdcase'
+const sectionContent = computed(() => props.section?.content || {})
+const reviewsTag = computed(() => sectionContent.value.subtitle || 'Реальные впечатления')
+const reviewsTitle = computed(() => sectionContent.value.title || 'Отзывы участников')
+const reviewsDescription = computed(
+  () => sectionContent.value.description || 'Истории людей, которые прошли практику и поделились своим опытом.',
+)
+const reviewsCtaText = computed(() => sectionContent.value.button_text || 'Читать больше отзывов')
+const reviewsUrl = computed(() => sectionContent.value.button_link || 'https://t.me/leelabirdcase')
 
-const reviews = [
+const fallbackReviews = [
   {
     name: 'Участница игры',
     date: 'Отзыв из Telegram',
@@ -34,18 +48,36 @@ const reviews = [
   },
 ]
 
-const activeReview = computed(() => reviews[activeIndex.value])
+const reviews = computed(() => {
+  const items = sectionContent.value.items
+  if (!Array.isArray(items) || items.length === 0) {
+    return fallbackReviews
+  }
+
+  const mapped = items
+    .filter((item) => item && item.text)
+    .map((item) => ({
+      name: item.name || 'Участник практики',
+      date: item.date || 'Отзыв',
+      avatar: item.avatar || '/images/IMG_1245.JPG',
+      text: item.text,
+    }))
+
+  return mapped.length ? mapped : fallbackReviews
+})
+
+const activeReview = computed(() => reviews.value[activeIndex.value] || reviews.value[0])
 
 let observer
 let touchStartX = 0
 let touchDeltaX = 0
 
 const nextReview = () => {
-  activeIndex.value = (activeIndex.value + 1) % reviews.length
+  activeIndex.value = (activeIndex.value + 1) % reviews.value.length
 }
 
 const prevReview = () => {
-  activeIndex.value = activeIndex.value === 0 ? reviews.length - 1 : activeIndex.value - 1
+  activeIndex.value = activeIndex.value === 0 ? reviews.value.length - 1 : activeIndex.value - 1
 }
 
 const setReview = (index) => {
@@ -119,15 +151,15 @@ onBeforeUnmount(() => {
         :class="isVisible ? 'translate-y-0 opacity-100 blur-0' : 'translate-y-6 opacity-0 blur-sm'"
       >
         <span class="mb-4 inline-flex rounded-full border border-[#8B7449]/40 bg-white/70 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#8B7449]">
-          Реальные впечатления
+          {{ reviewsTag }}
         </span>
 
         <h2 class="text-3xl font-semibold leading-tight tracking-[-0.035em] text-[#24231F] sm:text-4xl md:text-5xl">
-          Отзывы участников
+          {{ reviewsTitle }}
         </h2>
 
         <p class="mt-4 text-base leading-7 text-stone-600 sm:text-lg sm:leading-8">
-          Истории людей, которые прошли Игру Лила и поделились своим опытом, инсайтами и внутренними изменениями.
+          {{ reviewsDescription }}
         </p>
       </div>
 
@@ -191,7 +223,7 @@ onBeforeUnmount(() => {
                 rel="noopener noreferrer"
                 class="inline-flex items-center justify-center gap-2 rounded-full bg-[#24231F] px-5 py-3 text-sm font-medium text-white shadow-lg shadow-[#24231F]/15 transition duration-300 hover:-translate-y-0.5 hover:bg-[#8B7449] hover:shadow-[0_16px_40px_rgba(139,116,73,0.18)]"
               >
-                Читать больше отзывов
+                {{ reviewsCtaText }}
                 <svg
                   viewBox="0 0 24 24"
                   class="h-4 w-4"

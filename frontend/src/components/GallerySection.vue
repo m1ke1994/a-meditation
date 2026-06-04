@@ -1,7 +1,14 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
-const galleryItems = [
+const props = defineProps({
+  section: {
+    type: Object,
+    default: null,
+  },
+})
+
+const fallbackGalleryItems = [
   {
     src: '/images/DSC08101.JPG',
     alt: 'Атмосфера практики Лила',
@@ -23,6 +30,27 @@ const galleryItems = [
     title: 'Глубокое состояние',
   },
 ]
+
+const sectionContent = computed(() => props.section?.content || {})
+const galleryTitle = computed(() => sectionContent.value.title || 'Галерея')
+const gallerySubtitle = computed(() => sectionContent.value.subtitle || 'Визуальная история')
+const galleryDescription = computed(
+  () => sectionContent.value.description || 'Атмосфера практик, встреч и пространства',
+)
+const galleryItems = computed(() => {
+  const items = sectionContent.value.items
+  if (!Array.isArray(items) || items.length === 0) {
+    return fallbackGalleryItems
+  }
+
+  return items
+    .filter((item) => item && item.src)
+    .map((item) => ({
+      src: item.src,
+      alt: item.alt || item.title || 'Галерея',
+      title: item.title || 'Изображение',
+    }))
+})
 
 const selectedMedia = ref(null)
 let previousBodyOverflow = ''
@@ -62,15 +90,15 @@ onBeforeUnmount(() => {
     <div class="mx-auto max-w-[1200px]">
       <div class="mx-auto max-w-[760px] text-center">
         <p class="mb-3 text-xs font-medium uppercase tracking-[0.28em] text-[#8B7449]/60">
-          Визуальная история
+          {{ gallerySubtitle }}
         </p>
 
         <h2 class="text-4xl font-semibold leading-tight tracking-[0.01em] text-[#24231F] sm:text-5xl md:text-6xl">
-          Галерея
+          {{ galleryTitle }}
         </h2>
 
         <p class="mt-5 text-lg leading-8 text-stone-600 sm:text-xl sm:leading-9">
-          Атмосфера практик, встреч и пространства
+          {{ galleryDescription }}
         </p>
       </div>
 

@@ -1,27 +1,133 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { serviceGroups } from '../data/services'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ServiceOrderModal from './ServiceOrderModal.vue'
 
-const activeGroupId = ref(serviceGroups[0].id)
+const props = defineProps({
+  section: {
+    type: Object,
+    default: null,
+  },
+})
+
+const fallbackServiceGroups = [
+  {
+    id: 'lila',
+    label: 'Игра Лила',
+    intro: 'Форматы для личного запроса и глубокого разбора ситуации.',
+    items: [
+      {
+        icon: 'person',
+        title: 'Индивидуальная игра Лила',
+        price: 'от 5 000 ₽',
+        duration: '2-3 часа',
+        format: 'очно / онлайн',
+        text: 'Личная практика для глубокого разбора запроса, поиска внутренней опоры и честного диалога с собой.',
+        button_text: 'Записаться',
+      },
+      {
+        icon: 'group',
+        title: 'Групповая игра Лила',
+        price: 'от 3 000 ₽',
+        duration: '3-4 часа',
+        format: 'очно',
+        text: 'Практика в малой группе, где каждый участник проходит свой путь через поле игры.',
+        button_text: 'Записаться',
+      },
+    ],
+  },
+  {
+    id: 'meditations',
+    label: 'Медитации',
+    intro: 'Спокойные форматы для восстановления и внутренней опоры.',
+    items: [
+      {
+        icon: 'person',
+        title: 'Индивидуальная медитация',
+        price: 'от 3 000 ₽',
+        duration: '60 минут',
+        format: 'очно / онлайн',
+        text: 'Персональная практика для восстановления, тишины и контакта с собой.',
+        button_text: 'Записаться',
+      },
+      {
+        icon: 'group',
+        title: 'Групповая медитация',
+        price: 'от 1 500 ₽',
+        duration: '60-90 минут',
+        format: 'очно',
+        text: 'Мягкая практика в группе для замедления и внутренней опоры.',
+        button_text: 'Записаться',
+      },
+    ],
+  },
+]
+
+const iconPool = ['person', 'group', 'pair', 'online', 'intention', 'gift', 'theme']
+const sectionContent = computed(() => props.section?.content || {})
+const sectionTitle = computed(() => sectionContent.value.title || 'Форматы услуг')
+const sectionSubtitle = computed(
+  () => sectionContent.value.subtitle || 'Выберите направление и подходящий формат участия',
+)
+const sectionDescription = computed(
+  () => sectionContent.value.description || 'Все форматы можно адаптировать под ваш запрос.',
+)
+
+const serviceGroups = computed(() => {
+  const tabs = sectionContent.value.tabs
+  if (!Array.isArray(tabs) || tabs.length === 0) {
+    return fallbackServiceGroups
+  }
+
+  const mappedTabs = tabs
+    .filter((tab) => tab && tab.key && tab.label)
+    .map((tab) => ({
+      id: tab.key,
+      label: tab.label,
+      intro: tab.intro || sectionDescription.value,
+      items: (Array.isArray(tab.cards) ? tab.cards : []).map((card, index) => ({
+        icon: card.icon || iconPool[index % iconPool.length],
+        title: card.title || '',
+        price: card.price || '',
+        duration: card.duration || '',
+        format: card.format || '',
+        text: card.description || card.text || '',
+        button_text: card.button_text || sectionContent.value.button_text || 'Записаться',
+      })),
+    }))
+    .filter((tab) => tab.items.length > 0)
+
+  return mappedTabs.length ? mappedTabs : fallbackServiceGroups
+})
+
+const activeGroupId = ref(serviceGroups.value[0]?.id || fallbackServiceGroups[0].id)
 const selectedService = ref(null)
+const selectedServiceType = ref('')
 
 const activeGroup = computed(() => (
-  serviceGroups.find((group) => group.id === activeGroupId.value) || serviceGroups[0]
+  serviceGroups.value.find((group) => group.id === activeGroupId.value) || serviceGroups.value[0]
 ))
 
-const openOrderModal = (service) => {
+watch(serviceGroups, (groups) => {
+  if (!groups.length) return
+  if (!groups.some((group) => group.id === activeGroupId.value)) {
+    activeGroupId.value = groups[0].id
+  }
+})
+
+const openOrderModal = (service, serviceType) => {
   selectedService.value = service
+  selectedServiceType.value = serviceType || ''
 }
 
 const closeOrderModal = () => {
   selectedService.value = null
+  selectedServiceType.value = ''
 }
 
 const handleServiceTabSelect = (event) => {
   const targetGroupId = event.detail
 
-  if (!serviceGroups.some((group) => group.id === targetGroupId)) return
+  if (!serviceGroups.value.some((group) => group.id === targetGroupId)) return
 
   activeGroupId.value = targetGroupId
 }
@@ -47,11 +153,11 @@ onBeforeUnmount(() => {
         </p>
 
         <h2 class="text-3xl font-semibold uppercase leading-tight tracking-[0.08em] text-[#24231F] sm:text-4xl md:text-5xl">
-          Форматы услуг
+          {{ sectionTitle }}
         </h2>
 
         <p class="mt-4 text-base leading-7 text-stone-600 sm:text-lg">
-          Выберите направление и подходящий формат участия
+          {{ sectionSubtitle }}
         </p>
       </div>
 
@@ -216,7 +322,7 @@ onBeforeUnmount(() => {
             </p>
 
             <p class="mt-1 text-sm leading-6 text-stone-500">
-              {{ item.duration }}
+              {{ item.duration }}<span v-if="item.format"> · {{ item.format }}</span>
             </p>
 
             <p class="mt-5 flex-1 text-sm leading-6 text-stone-600">
@@ -226,9 +332,9 @@ onBeforeUnmount(() => {
             <button
               type="button"
               class="mt-6 rounded-full border border-[#8B7449]/25 px-5 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#8B7449] transition duration-300 hover:border-[#24231F] hover:bg-[#24231F] hover:text-white"
-              @click="openOrderModal(item)"
+              @click="openOrderModal(item, activeGroup.id)"
             >
-              Записаться
+              {{ item.button_text || 'Записаться' }}
             </button>
           </article>
         </div>
@@ -237,6 +343,7 @@ onBeforeUnmount(() => {
 
     <ServiceOrderModal
       :service="selectedService"
+      :service-type="selectedServiceType"
       @close="closeOrderModal"
     />
   </section>

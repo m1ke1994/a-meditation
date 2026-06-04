@@ -1,9 +1,20 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 const diceContainer = ref(null)
+
+const props = defineProps({
+  section: {
+    type: Object,
+    default: null,
+  },
+  site: {
+    type: Object,
+    default: null,
+  },
+})
 
 const navLinks = [
   { label: 'Простыми словами', target: 'simple-words' },
@@ -12,11 +23,29 @@ const navLinks = [
   { label: 'Стоимость', target: 'pricing' },
 ]
 
-const contactLinks = [
+const fallbackContactLinks = [
   { label: 'Записаться на игру', target: 'contacts' },
   { label: 'Telegram', href: '#' },
   { label: 'WhatsApp', href: '#' },
 ]
+
+const footerContent = computed(() => props.section?.content || {})
+const footerText = computed(
+  () => footerContent.value.text || 'Игра Лила в Москве — путь к ясности через честный диалог с собой.',
+)
+const contactLinks = computed(() => {
+  const links = footerContent.value.links
+  if (!Array.isArray(links) || links.length === 0) {
+    return fallbackContactLinks
+  }
+  return links.map((link) => ({
+    label: link.label || 'Ссылка',
+    target: String(link.href || '').startsWith('#') ? String(link.href).slice(1) : '',
+    href: String(link.href || '').startsWith('#') ? '' : link.href || '',
+    targetMode: link.target || '_self',
+  }))
+})
+const footerBrand = computed(() => (props.site?.name || 'ЛИЛА МОСКВА').toUpperCase())
 
 const modelUrl = '/models/dice.glb'
 
@@ -32,6 +61,17 @@ function scrollToSection(target) {
 
   if (section) {
     section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
+function handleContactClick(item) {
+  if (item.target) {
+    scrollToSection(item.target)
+    return
+  }
+  if (item.href) {
+    const mode = item.targetMode === '_blank' ? '_blank' : '_self'
+    window.open(item.href, mode, mode === '_blank' ? 'noopener,noreferrer' : undefined)
   }
 }
 
@@ -176,9 +216,9 @@ onBeforeUnmount(() => {
           <RouterLink
             to="/"
             class="inline-flex items-center gap-2 text-sm font-semibold uppercase leading-none tracking-[0.22em] text-white"
-            aria-label="Лила Москва"
+            :aria-label="footerBrand"
           >
-            <span>ЛИЛА</span>
+            <span>{{ footerBrand.split(' ')[0] || 'ЛИЛА' }}</span>
 
             <span
               ref="diceContainer"
@@ -187,7 +227,7 @@ onBeforeUnmount(() => {
               aria-label="3D кубик"
             />
 
-            <span>МОСКВА</span>
+            <span>{{ footerBrand.split(' ').slice(1).join(' ') || 'МОСКВА' }}</span>
           </RouterLink>
 
           <p class="text-sm leading-6 text-white/70">
@@ -226,7 +266,7 @@ onBeforeUnmount(() => {
               :key="item.label"
               type="button"
               class="w-fit text-left transition hover:translate-x-0.5 hover:text-[#8B7449]"
-              @click="item.target ? scrollToSection(item.target) : null"
+              @click="handleContactClick(item)"
             >
               {{ item.label }}
             </button>
@@ -235,7 +275,7 @@ onBeforeUnmount(() => {
       </div>
 
       <div class="mt-9 border-t border-white pt-5 text-sm leading-6 text-white/75">
-        Игра Лила в Москве — путь к ясности через честный диалог с собой.
+        {{ footerText }}
       </div>
     </div>
   </footer>

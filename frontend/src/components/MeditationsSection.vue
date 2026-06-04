@@ -1,7 +1,14 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
-const practices = [
+const props = defineProps({
+  section: {
+    type: Object,
+    default: null,
+  },
+})
+
+const fallbackPractices = [
   {
     number: '01',
     title: 'Глубокое расслабление',
@@ -31,6 +38,27 @@ const practices = [
     type: 'image',
   },
 ]
+
+const sectionContent = computed(() => props.section?.content || {})
+const sectionTag = computed(() => sectionContent.value.subtitle || 'Практики тишины')
+const sectionTitle = computed(() => sectionContent.value.title || 'Медитации')
+const sectionDescription = computed(
+  () => sectionContent.value.description || 'Пространство тишины, бережного внимания и внутренней опоры',
+)
+const practices = computed(() => {
+  const items = sectionContent.value.items
+  if (!Array.isArray(items) || items.length === 0) {
+    return fallbackPractices
+  }
+
+  return items.map((item, index) => ({
+    number: item.number || String(index + 1).padStart(2, '0'),
+    title: item.title || 'Практика',
+    text: item.text || '',
+    image: item.image || '',
+    type: item.type === 'video' ? 'video' : 'image',
+  }))
+})
 
 const selectedMedia = ref(null)
 let previousBodyOverflow = ''
@@ -90,18 +118,18 @@ onBeforeUnmount(() => {
       <div class="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-end">
         <div>
           <span class="mb-4 inline-flex rounded-full border border-[#8B7449]/40 bg-white/70 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#8B7449]">
-            Практики тишины
+            {{ sectionTag }}
           </span>
 
           <h2 class="text-4xl font-semibold leading-[1.04] tracking-[-0.04em] text-[#24231F] sm:text-5xl md:text-6xl">
-            Медитации
+            {{ sectionTitle }}
             <span class="block text-[#8B7449]">для восстановления</span>
           </h2>
         </div>
 
         <div class="max-w-2xl lg:justify-self-end">
           <p class="text-xl font-medium leading-8 text-[#24231F] sm:text-2xl sm:leading-9">
-            Пространство тишины, бережного внимания и внутренней опоры
+            {{ sectionDescription }}
           </p>
 
           <p class="mt-5 text-base leading-8 text-stone-600 sm:text-lg sm:leading-8">

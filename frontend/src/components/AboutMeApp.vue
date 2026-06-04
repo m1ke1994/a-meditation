@@ -1,5 +1,12 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+
+const props = defineProps({
+  section: {
+    type: Object,
+    default: null,
+  },
+})
 
 const sectionRef = ref(null)
 const isVisible = ref(false)
@@ -9,7 +16,11 @@ const counters = ref({
   games: 0,
 })
 
-const imageUrl = '/images/2025-02-26 12-35-42.JPG'
+const sectionContent = computed(() => props.section?.content || {})
+const imageUrl = computed(() => sectionContent.value.image || '/images/2025-02-26 12-35-42.JPG')
+const guideTag = computed(() => sectionContent.value.tag || 'Проводник игры Лила')
+const guideTitle = computed(() => sectionContent.value.subtitle || 'Ольга Бердникова')
+const guideCaption = computed(() => sectionContent.value.description || 'Практик осознанности, медитации и Игры Лила')
 
 const metrics = [
   {
@@ -154,11 +165,11 @@ onBeforeUnmount(() => {
     <div class="relative mx-auto max-w-[1120px]">
       <div class="mb-7 max-w-3xl">
         <span class="mb-3 inline-flex rounded-full border border-[#8B7449]/40 bg-white/70 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-[#8B7449]">
-          Проводник игры Лила
+          {{ guideTag }}
         </span>
 
         <h2 class="text-3xl font-semibold leading-[1.04] tracking-[-0.04em] text-[#24231F] sm:text-4xl md:text-5xl">
-          Ольга Бердникова
+          {{ guideTitle }}
           <span class="block text-[#8B7449]">Leelabird</span>
         </h2>
       </div>
@@ -183,7 +194,7 @@ onBeforeUnmount(() => {
               </p>
 
               <p class="mt-2 text-lg font-semibold leading-tight sm:text-xl">
-                Практик осознанности, медитации и Игры Лила
+                {{ guideCaption }}
               </p>
             </div>
           </div>

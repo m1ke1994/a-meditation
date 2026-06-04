@@ -1,5 +1,13 @@
-<script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+﻿<script setup>
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { submitLead } from '../composables/useLeadApi'
+
+const props = defineProps({
+  section: {
+    type: Object,
+    default: null,
+  },
+})
 
 const form = ref({
   name: '',
@@ -8,8 +16,11 @@ const form = ref({
   message: '',
   agree: true,
 })
+const isSending = ref(false)
+const submitSuccess = ref('')
+const submitError = ref('')
 
-const locations = [
+const defaultLocations = [
   {
     title: 'Парк Горького',
     address: 'Москва, ул. Крымский Вал, 9',
@@ -35,6 +46,30 @@ const locations = [
     lng: 37.6208,
   },
 ]
+
+const sectionContent = computed(() => props.section?.content || {})
+const sectionTag = computed(() => sectionContent.value.subtitle || 'Свяжитесь для записи')
+const sectionTitle = computed(() => sectionContent.value.title || 'Контакты и запись на практику')
+const sectionDescription = computed(
+  () => sectionContent.value.description || 'Оставьте заявку, и мы подберем удобный формат практики под ваш запрос.',
+)
+const sectionAddress = computed(() => sectionContent.value.address || 'Москва, ул. Ботаническая, 33В стр 1')
+const sectionPhone = computed(() => sectionContent.value.phone || '+7 903 198-91-88')
+const sectionTelegram = computed(() => sectionContent.value.telegram || '@leelabirdcase')
+const locations = computed(() => {
+  const apiLocations = sectionContent.value.locations
+  if (!Array.isArray(apiLocations) || apiLocations.length === 0) {
+    return defaultLocations
+  }
+  return apiLocations
+    .filter((location) => location && typeof location.lat === 'number' && typeof location.lng === 'number')
+    .map((location) => ({
+      title: location.title || 'Локация',
+      address: location.address || '',
+      lat: location.lat,
+      lng: location.lng,
+    }))
+})
 
 const mapRef = ref(null)
 const mapStatus = ref('loading')
@@ -76,9 +111,9 @@ const initMap = async () => {
       controls: ['zoomControl'],
     })
 
-    const coordinates = locations.map((location) => [location.lat, location.lng])
+    const coordinates = locations.value.map((location) => [location.lat, location.lng])
 
-    locations.forEach((location) => {
+    locations.value.forEach((location) => {
       const placemark = new ymaps.Placemark(
         [location.lat, location.lng],
         {
@@ -110,8 +145,45 @@ const initMap = async () => {
   }
 }
 
-function submitForm() {
-  console.log('Contact form:', form.value)
+function resetForm() {
+  form.value = {
+    name: '',
+    phone: '',
+    telegram: '',
+    message: '',
+    agree: true,
+  }
+}
+
+async function submitForm() {
+  if (isSending.value) return
+  submitSuccess.value = ''
+  submitError.value = ''
+
+  if (!form.value.name.trim() || !form.value.phone.trim()) {
+    submitError.value = 'Заполните обязательные поля'
+    return
+  }
+
+  isSending.value = true
+  try {
+    await submitLead({
+      section_key: 'contacts',
+      form_name: 'Форма записи',
+      name: form.value.name.trim(),
+      phone: form.value.phone.trim(),
+      message: form.value.message.trim(),
+      payload: {
+        telegram: form.value.telegram.trim(),
+      },
+    })
+    submitSuccess.value = 'Заявка отправлена'
+    resetForm()
+  } catch (error) {
+    submitError.value = error instanceof Error ? error.message : 'Не удалось отправить заявку'
+  } finally {
+    isSending.value = false
+  }
 }
 
 onMounted(() => {
@@ -132,15 +204,15 @@ onBeforeUnmount(() => {
       <!-- Header -->
       <div class="mx-auto max-w-[760px] text-center">
         <p class="mb-3 text-xs font-medium uppercase tracking-[0.28em] text-black/40">
-          Связаться с нами
+          {{ sectionTag }}
         </p>
 
         <h2 class="text-3xl font-semibold leading-tight tracking-[0.02em] text-[#24231F] sm:text-4xl md:text-5xl">
-          Контакты и запись на игру
+          {{ sectionTitle }}
         </h2>
 
         <p class="mt-4 text-base leading-7 text-stone-600 sm:text-lg">
-          Оставьте заявку, и мы подберём удобный формат игры Лила для вашего запроса.
+          {{ sectionDescription }}
         </p>
       </div>
 
@@ -183,7 +255,7 @@ onBeforeUnmount(() => {
             <textarea
               v-model="form.message"
               rows="5"
-              placeholder="Дата, количество игроков, пожелания"
+              placeholder="Дата, количество участников, пожелания"
               class="w-full resize-none rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449]/60"
             />
 
@@ -201,10 +273,13 @@ onBeforeUnmount(() => {
 
             <button
               type="submit"
+              :disabled="isSending"
               class="w-full rounded-full border border-black/20 px-6 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#24231F] transition duration-300 hover:-translate-y-1 hover:bg-[#24231F] hover:text-white hover:shadow-lg"
             >
-              Отправить
+              {{ isSending ? 'Отправляем...' : 'Отправить' }}
             </button>
+            <p v-if="submitSuccess" class="text-sm text-emerald-700">{{ submitSuccess }}</p>
+            <p v-if="submitError" class="text-sm text-rose-700">{{ submitError }}</p>
           </form>
         </div>
 
@@ -212,18 +287,18 @@ onBeforeUnmount(() => {
         <div class="overflow-hidden rounded-[2rem] border border-black/10 bg-white shadow-[0_25px_80px_rgba(0,0,0,0.06)]">
           <div class="p-6 md:p-8">
             <h3 class="text-2xl font-semibold text-[#24231F]">
-              Где проходит игра
+              Где проходит практика
             </h3>
 
             <div class="mt-5 space-y-3 text-stone-600">
               <p>
                 <span class="text-black/40">Адрес:</span><br>
-                Москва, ул. Боманическая, 33В стр 1
+                {{ sectionAddress }}
               </p>
 
               <p>
                 <span class="text-black/40">Телефон / Telegram:</span><br>
-                +7 903 198-91-88
+                {{ sectionPhone }} В· {{ sectionTelegram }}
               </p>
 
               <p>
@@ -273,3 +348,4 @@ onBeforeUnmount(() => {
     </div>
   </section>
 </template>
+
