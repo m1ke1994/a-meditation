@@ -11,6 +11,7 @@ frontend/public/images/*.mp4
 
 # Node
 node_modules/
+frontend/.vite/
 
 # Build output
 dist/
