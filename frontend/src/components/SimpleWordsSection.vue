@@ -1,12 +1,19 @@
 <script setup>
 import { computed, ref } from 'vue'
 
+const props = defineProps({
+  section: {
+    type: Object,
+    default: null,
+  },
+})
+
 const activeSimpleIndex = ref(0)
 const activeProcessIndex = ref(0)
 const simpleScrollRef = ref(null)
 const processScrollRef = ref(null)
 
-const processCards = [
+const fallbackProcessCards = [
   {
     icon: '01',
     title: 'Без спешки',
@@ -29,7 +36,7 @@ const processCards = [
   },
 ]
 
-const simpleCards = [
+const fallbackSimpleCards = [
   {
     number: '01',
     title: 'Что такое Лила?',
@@ -52,6 +59,47 @@ const simpleCards = [
 Вы точно узнаете, чего на самом деле хотите, раскроете свой потенциал и запустите процесс изменений в свою жизнь`,
   },
 ]
+
+const sectionContent = computed(() => props.section?.content || {})
+const simpleEyebrow = computed(() => sectionContent.value.eyebrow || 'Понятно и бережно')
+const simpleTitle = computed(() => sectionContent.value.title || 'Лила простыми словами')
+const simpleDescription = computed(
+  () => sectionContent.value.description || 'Игра Лила — это не гадание и не случайный набор ходов. Это мягкий способ увидеть свои внутренние состояния, вопросы и повторяющиеся сценарии через игровое поле.',
+)
+const simpleMobileLabel = computed(() => sectionContent.value.mobile_cards_label || 'Листайте карточки')
+const processEyebrow = computed(() => sectionContent.value.process_eyebrow || 'Процесс')
+const processTitle = computed(() => sectionContent.value.process_title || 'Как проходит Лила?')
+const processMobileLabel = computed(() => sectionContent.value.mobile_process_label || 'Свайпните процесс')
+
+const simpleCards = computed(() => {
+  const cards = sectionContent.value.cards
+  if (!Array.isArray(cards) || cards.length === 0) return fallbackSimpleCards
+
+  const mapped = cards
+    .filter((card) => card && (card.title || card.text))
+    .map((card, index) => ({
+      number: card.number || String(index + 1).padStart(2, '0'),
+      title: card.title || '',
+      text: card.text || '',
+    }))
+
+  return mapped.length ? mapped : fallbackSimpleCards
+})
+
+const processCards = computed(() => {
+  const cards = sectionContent.value.process_cards
+  if (!Array.isArray(cards) || cards.length === 0) return fallbackProcessCards
+
+  const mapped = cards
+    .filter((card) => card && (card.title || card.text))
+    .map((card, index) => ({
+      icon: card.icon || String(index + 1).padStart(2, '0'),
+      title: card.title || '',
+      text: card.text || '',
+    }))
+
+  return mapped.length ? mapped : fallbackProcessCards
+})
 
 const simpleProgress = computed(() => activeSimpleIndex.value + 1)
 const processProgress = computed(() => activeProcessIndex.value + 1)
@@ -99,16 +147,15 @@ const scrollToCard = (type, index) => {
       <div>
         <div class="mx-auto max-w-[780px] text-center">
           <p class="mb-4 text-xs font-medium uppercase tracking-[0.28em] text-black/45">
-            Понятно и бережно
+            {{ simpleEyebrow }}
           </p>
 
           <h2 class="text-4xl font-semibold leading-tight tracking-[0.01em] text-[#20201d] sm:text-5xl md:text-6xl">
-            Лила простыми словами
+            {{ simpleTitle }}
           </h2>
 
           <p class="mt-5 text-lg leading-8 text-stone-600 sm:text-xl sm:leading-9">
-            Игра Лила — это не гадание и не случайный набор ходов. Это мягкий способ увидеть свои внутренние состояния,
-            вопросы и повторяющиеся сценарии через игровое поле.
+            {{ simpleDescription }}
           </p>
         </div>
 
@@ -137,7 +184,7 @@ const scrollToCard = (type, index) => {
         <div class="mt-10 md:hidden">
           <div class="mb-4 flex items-center justify-between">
             <p class="text-xs font-medium uppercase tracking-[0.22em] text-[#1E7D8B]/70">
-              Листайте карточки
+              {{ simpleMobileLabel }}
             </p>
             <div class="flex items-center gap-2 text-xs text-stone-500">
               <span>{{ simpleProgress }}</span>
@@ -191,11 +238,11 @@ const scrollToCard = (type, index) => {
       <div class="mt-20 md:mt-24">
         <div class="mx-auto max-w-[760px] text-center">
           <p class="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
-            Процесс
+            {{ processEyebrow }}
           </p>
 
           <h2 class="mt-3 text-3xl font-semibold uppercase leading-tight tracking-[0.08em] text-[#20201d] sm:text-4xl md:text-5xl">
-            Как проходит Лила?
+            {{ processTitle }}
           </h2>
         </div>
 
@@ -220,7 +267,7 @@ const scrollToCard = (type, index) => {
         <div class="mt-10 md:hidden">
           <div class="mb-4 flex items-center justify-between">
             <p class="text-xs font-medium uppercase tracking-[0.22em] text-[#1E7D8B]/70">
-              Свайпните процесс
+              {{ processMobileLabel }}
             </p>
             <div class="flex items-center gap-2 text-xs text-stone-500">
               <span>{{ processProgress }}</span>
