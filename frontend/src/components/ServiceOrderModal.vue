@@ -11,6 +11,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  content: {
+    type: Object,
+    default: () => ({}),
+  },
 })
 
 const emit = defineEmits(['close'])
@@ -31,6 +35,20 @@ let closeTimer = 0
 let previousBodyOverflow = ''
 
 const isOpen = computed(() => Boolean(props.service))
+const modalTag = computed(() => props.content?.modal_tag || 'Заявка')
+const modalTitle = computed(() => props.content?.modal_title || 'Записаться на услугу')
+const selectedLabel = computed(() => props.content?.modal_selected_label || 'Выбранный формат')
+const priceLabel = computed(() => props.content?.modal_price_label || 'Стоимость')
+const durationLabel = computed(() => props.content?.modal_duration_label || 'Длительность')
+const nameLabel = computed(() => props.content?.modal_name_label || 'Имя')
+const namePlaceholder = computed(() => props.content?.modal_name_placeholder || 'Ваше имя')
+const phoneLabel = computed(() => props.content?.modal_phone_label || 'Телефон')
+const phonePlaceholder = computed(() => props.content?.modal_phone_placeholder || '+7 999 000-00-00')
+const commentLabel = computed(() => props.content?.modal_comment_label || 'Комментарий')
+const commentPlaceholder = computed(() => props.content?.modal_comment_placeholder || 'Дата, количество игроков, пожелания')
+const submitText = computed(() => props.content?.modal_submit_text || 'Отправить')
+const sendingText = computed(() => props.content?.modal_sending_text || 'Отправляем...')
+const successText = computed(() => props.content?.modal_success_text || 'Заявка успешно отправлена')
 
 const resetForm = () => {
   form.value = initialForm()
@@ -190,20 +208,20 @@ onBeforeUnmount(() => {
             <div class="box-border max-h-[90vh] w-full min-w-0 overflow-y-auto p-5 sm:p-6 md:p-8">
               <div class="min-w-0 pr-12">
                 <p class="mb-2 text-xs font-medium uppercase tracking-[0.24em] text-[#8B7449]/65">
-                  Заявка
+                  {{ modalTag }}
                 </p>
 
                 <h2
                   id="service-order-title"
                   class="text-2xl font-semibold leading-tight text-[#24231F] sm:text-3xl"
                 >
-                  Записаться на услугу
+                  {{ modalTitle }}
                 </h2>
               </div>
 
               <div class="mt-5 box-border w-full min-w-0 rounded-3xl border border-black/10 bg-white p-4 shadow-sm">
                 <p class="text-xs font-medium uppercase tracking-[0.2em] text-stone-500">
-                  Выбранный формат
+                  {{ selectedLabel }}
                 </p>
 
                 <h3 class="mt-2 min-w-0 text-xl font-semibold leading-7 text-[#24231F]">
@@ -212,12 +230,12 @@ onBeforeUnmount(() => {
 
                 <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div class="box-border min-w-0 rounded-2xl bg-[#FBF7EF] px-4 py-3">
-                    <span class="block text-[11px] uppercase tracking-[0.16em] text-stone-500">Стоимость</span>
+                    <span class="block text-[11px] uppercase tracking-[0.16em] text-stone-500">{{ priceLabel }}</span>
                     <span class="mt-1 block min-w-0 text-sm font-semibold text-[#8B7449]">{{ service.price }}</span>
                   </div>
 
                   <div class="box-border min-w-0 rounded-2xl bg-[#FBF7EF] px-4 py-3">
-                    <span class="block text-[11px] uppercase tracking-[0.16em] text-stone-500">Длительность</span>
+                    <span class="block text-[11px] uppercase tracking-[0.16em] text-stone-500">{{ durationLabel }}</span>
                     <span class="mt-1 block min-w-0 text-sm font-semibold text-[#24231F]">{{ service.duration }}</span>
                   </div>
                 </div>
@@ -228,7 +246,7 @@ onBeforeUnmount(() => {
                 class="mt-5 box-border w-full min-w-0 rounded-3xl border border-[#8B7449]/20 bg-white p-5 text-center shadow-sm"
               >
                 <p class="text-lg font-semibold text-[#24231F]">
-                  Заявка успешно отправлена
+                  {{ successText }}
                 </p>
               </div>
 
@@ -238,13 +256,13 @@ onBeforeUnmount(() => {
                 @submit.prevent="submitForm"
               >
                 <label class="block min-w-0">
-                  <span class="mb-1.5 block text-sm font-medium text-[#24231F]">Имя</span>
+                  <span class="mb-1.5 block text-sm font-medium text-[#24231F]">{{ nameLabel }}</span>
                   <input
                     v-model="form.name"
                     type="text"
                     class="block box-border w-full min-w-0 max-w-full rounded-2xl border bg-[#F8F3EA] px-4 py-3 text-sm text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449] focus:bg-white"
                     :class="errors.name ? 'border-[#8B7449]' : 'border-[#8B7449]/20'"
-                    placeholder="Ваше имя"
+                    :placeholder="namePlaceholder"
                   >
                   <span
                     v-if="errors.name"
@@ -255,13 +273,13 @@ onBeforeUnmount(() => {
                 </label>
 
                 <label class="block min-w-0">
-                  <span class="mb-1.5 block text-sm font-medium text-[#24231F]">Телефон</span>
+                  <span class="mb-1.5 block text-sm font-medium text-[#24231F]">{{ phoneLabel }}</span>
                   <input
                     v-model="form.phone"
                     type="tel"
                     class="block box-border w-full min-w-0 max-w-full rounded-2xl border bg-[#F8F3EA] px-4 py-3 text-sm text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449] focus:bg-white"
                     :class="errors.phone ? 'border-[#8B7449]' : 'border-[#8B7449]/20'"
-                    placeholder="+7 999 000-00-00"
+                    :placeholder="phonePlaceholder"
                   >
                   <span
                     v-if="errors.phone"
@@ -272,11 +290,11 @@ onBeforeUnmount(() => {
                 </label>
 
                 <label class="block min-w-0">
-                  <span class="mb-1.5 block text-sm font-medium text-[#24231F]">Комментарий</span>
+                  <span class="mb-1.5 block text-sm font-medium text-[#24231F]">{{ commentLabel }}</span>
                   <textarea
                     v-model="form.details"
                     class="block box-border min-h-28 w-full min-w-0 max-w-full resize-none rounded-2xl border border-[#8B7449]/20 bg-[#F8F3EA] px-4 py-3 text-sm text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449] focus:bg-white"
-                    placeholder="Дата, количество игроков, пожелания"
+                    :placeholder="commentPlaceholder"
                   />
                 </label>
 
@@ -286,7 +304,7 @@ onBeforeUnmount(() => {
                     class="w-full rounded-full border border-[#24231F]/25 bg-[#24231F] px-6 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#8B7449] hover:shadow-[0_18px_45px_rgba(139,116,73,0.18)] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto sm:flex-1"
                     :disabled="isSending"
                   >
-                    {{ isSending ? 'Отправляем...' : 'Отправить' }}
+                    {{ isSending ? sendingText : submitText }}
                   </button>
                 </div>
                 <p v-if="errors.submit" class="text-sm text-[#8B7449]">{{ errors.submit }}</p>

@@ -14,6 +14,7 @@ import { usePublicSiteContent } from './composables/usePublicSiteContent'
 
 const { site, getSection } = usePublicSiteContent()
 
+const headerSection = computed(() => getSection('header'))
 const heroSection = computed(() => getSection('hero'))
 const simpleWordsSection = computed(() => getSection('simple_words'))
 const guideSection = computed(() => getSection('guide'))
@@ -27,7 +28,7 @@ const footerSection = computed(() => getSection('footer'))
 
 <template>
   <div class="flex min-h-screen flex-col bg-[#F8F3EA] text-[#24231F]">
-    <AppHeader />
+    <AppHeader :section="headerSection" />
     <main class="flex-1">
       <AppHero :section="heroSection" />
       <SimpleWordsSection :section="simpleWordsSection" />

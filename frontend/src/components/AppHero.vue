@@ -21,7 +21,11 @@ const heroPosterUrl = computed(() => sectionContent.value.image || '/images/Lila
 const heroVideoUrl = computed(() => sectionContent.value.background_video || '/images/Lila_Olga_2.2_compressed.mp4')
 const heroPhrases = computed(() => {
   const phrases = sectionContent.value.phrases
-  return Array.isArray(phrases) && phrases.length > 0 ? phrases : defaultHeroPhrases
+  if (!Array.isArray(phrases) || phrases.length === 0) return defaultHeroPhrases
+  const normalized = phrases
+    .map((item) => (typeof item === 'string' ? item : item?.text))
+    .filter(Boolean)
+  return normalized.length ? normalized : defaultHeroPhrases
 })
 const heroTag = computed(() => sectionContent.value.tag || 'ЛИЛА МОСКВА')
 const heroDescription = computed(

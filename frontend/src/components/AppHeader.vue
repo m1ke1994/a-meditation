@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
@@ -7,17 +7,40 @@ const isOpen = ref(false)
 const hasScrolled = ref(false)
 const diceContainer = ref(null)
 
-const leftMenuItems = [
+const props = defineProps({
+  section: {
+    type: Object,
+    default: null,
+  },
+})
+
+const fallbackLeftMenuItems = [
   { label: ' ПРО ЛИЛУ', targetId: 'simple-words' },
   { label: 'ПРОВОДНИК ЛИЛЫ', targetId: 'guide' },
   { label: 'ОТЗЫВЫ', targetId: 'reviews' },
 ]
-const rightMenuItems = [
+const fallbackRightMenuItems = [
   { label: 'МЕДИТАЦИИ', targetId: 'meditations' },
   { label: 'СТОИМОСТЬ', targetId: 'pricing' },
   { label: 'КОНТАКТЫ', targetId: 'contacts' },
 ]
-const mobileMenuItems = [...leftMenuItems, ...rightMenuItems]
+const sectionContent = computed(() => props.section?.content || {})
+
+function normalizeLinks(links, fallback) {
+  if (!Array.isArray(links) || links.length === 0) return fallback
+  return links
+    .filter((item) => item?.label && item?.href)
+    .map((item) => ({
+      label: item.label,
+      targetId: String(item.href).replace(/^#/, ''),
+    }))
+}
+
+const leftMenuItems = computed(() => normalizeLinks(sectionContent.value.left_links, fallbackLeftMenuItems))
+const rightMenuItems = computed(() => normalizeLinks(sectionContent.value.right_links, fallbackRightMenuItems))
+const mobileMenuItems = computed(() => [...leftMenuItems.value, ...rightMenuItems.value])
+const brandLeft = computed(() => sectionContent.value.brand_left || 'ЛИЛА')
+const brandRight = computed(() => sectionContent.value.brand_right || 'МОСКВА')
 
 const modelUrl = '/models/dice.glb'
 
@@ -233,14 +256,14 @@ onBeforeUnmount(() => {
         aria-label="Лила Москва"
         @click="closeMenu"
       >
-        <span>ЛИЛА</span>
+        <span>{{ brandLeft }}</span>
         <span
           ref="diceContainer"
           class="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-visible md:h-16 md:w-16"
           role="img"
           aria-label="3D кубик"
         />
-        <span>МОСКВА</span>
+        <span>{{ brandRight }}</span>
       </a>
 
       <nav class="hidden items-center justify-end gap-5 text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-200 md:flex lg:gap-6 xl:gap-7">

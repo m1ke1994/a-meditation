@@ -45,6 +45,15 @@ const sectionTitle = computed(() => sectionContent.value.title || 'Медита�
 const sectionDescription = computed(
   () => sectionContent.value.description || 'Пространство тишины, бережного внимания и внутренней опоры',
 )
+const sectionAccent = computed(() => sectionContent.value.accent || 'для восстановления')
+const sectionDetailText = computed(
+  () => sectionContent.value.detail_text || 'Медитации помогают замедлиться, отпустить лишнее напряжение и мягко вернуться к себе. Это спокойная практика для восстановления ресурса, ясности и более глубокого контакта со своим состоянием.',
+)
+const formatLabel = computed(() => sectionContent.value.format_label || 'Формат практики')
+const formatText = computed(
+  () => sectionContent.value.format_text || 'Медитации проходят в мягком темпе: без давления, без спешки и без необходимости «делать правильно». Главное — ваше состояние, дыхание и бережное возвращение внимания к себе.',
+)
+const buttonText = computed(() => sectionContent.value.button_text || 'Выбрать практику')
 const practices = computed(() => {
   const items = sectionContent.value.items
   if (!Array.isArray(items) || items.length === 0) {
@@ -123,7 +132,7 @@ onBeforeUnmount(() => {
 
           <h2 class="text-4xl font-semibold leading-[1.04] tracking-[-0.04em] text-[#24231F] sm:text-5xl md:text-6xl">
             {{ sectionTitle }}
-            <span class="block text-[#8B7449]">для восстановления</span>
+            <span class="block text-[#8B7449]">{{ sectionAccent }}</span>
           </h2>
         </div>
 
@@ -133,7 +142,7 @@ onBeforeUnmount(() => {
           </p>
 
           <p class="mt-5 text-base leading-8 text-stone-600 sm:text-lg sm:leading-8">
-            Медитации помогают замедлиться, отпустить лишнее напряжение и мягко вернуться к себе. Это спокойная практика для восстановления ресурса, ясности и более глубокого контакта со своим состоянием.
+            {{ sectionDetailText }}
           </p>
         </div>
       </div>
@@ -181,11 +190,11 @@ onBeforeUnmount(() => {
         <div class="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
           <div>
             <p class="text-sm font-medium uppercase tracking-[0.22em] text-[#8B7449]">
-              Формат практики
+              {{ formatLabel }}
             </p>
 
             <p class="mt-3 max-w-3xl text-lg leading-8 text-stone-700">
-              Медитации проходят в мягком темпе: без давления, без спешки и без необходимости “делать правильно”. Главное — ваше состояние, дыхание и бережное возвращение внимания к себе.
+              {{ formatText }}
             </p>
           </div>
 
@@ -194,7 +203,7 @@ onBeforeUnmount(() => {
             class="inline-flex items-center justify-center rounded-full bg-[#24231F] px-6 py-4 text-sm font-medium text-white shadow-lg shadow-[#24231F]/15 transition duration-300 hover:-translate-y-0.5 hover:bg-[#8B7449] hover:shadow-[0_16px_40px_rgba(139,116,73,0.18)]"
             @click="goToMeditationsPricing"
           >
-            Выбрать практику
+            {{ buttonText }}
           </button>
         </div>
       </div>

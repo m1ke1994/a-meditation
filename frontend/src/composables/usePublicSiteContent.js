@@ -59,7 +59,9 @@ export function usePublicSiteContent() {
     error.value = ''
 
     try {
-      const response = await fetch(`${apiBaseUrl}/api/sites/${siteSlug}/`)
+      const response = await fetch(`${apiBaseUrl}/api/sites/${siteSlug}/`, {
+        cache: 'no-store',
+      })
       if (!response.ok) {
         throw new Error(`Failed to load site content: ${response.status}`)
       }

@@ -56,6 +56,21 @@ const sectionDescription = computed(
 const sectionAddress = computed(() => sectionContent.value.address || 'Москва, ул. Ботаническая, 33В стр 1')
 const sectionPhone = computed(() => sectionContent.value.phone || '+7 903 198-91-88')
 const sectionTelegram = computed(() => sectionContent.value.telegram || '@leelabirdcase')
+const formTitle = computed(() => sectionContent.value.form_title || 'Форма обратной связи')
+const formDescription = computed(() => sectionContent.value.form_description || 'Заполните форму, и мы свяжемся с вами в ближайшее время.')
+const namePlaceholder = computed(() => sectionContent.value.name_placeholder || 'ФИО')
+const phonePlaceholder = computed(() => sectionContent.value.phone_placeholder || 'Телефон *')
+const telegramPlaceholder = computed(() => sectionContent.value.telegram_placeholder || 'Telegram')
+const messagePlaceholder = computed(() => sectionContent.value.message_placeholder || 'Дата, количество участников, пожелания')
+const consentText = computed(() => sectionContent.value.consent_text || 'Нажимая кнопку «Отправить», я соглашаюсь на обработку персональных данных.')
+const submitText = computed(() => sectionContent.value.submit_text || 'Отправить')
+const sendingText = computed(() => sectionContent.value.sending_text || 'Отправляем...')
+const successText = computed(() => sectionContent.value.success_text || 'Заявка отправлена')
+const locationTitle = computed(() => sectionContent.value.location_title || 'Где проходит практика')
+const addressLabel = computed(() => sectionContent.value.address_label || 'Адрес:')
+const contactsLabel = computed(() => sectionContent.value.contacts_label || 'Телефон / Telegram:')
+const formatLabel = computed(() => sectionContent.value.format_label || 'Формат:')
+const formatText = computed(() => sectionContent.value.format_text || 'индивидуально, парами или в группе')
 const locations = computed(() => {
   const apiLocations = sectionContent.value.locations
   if (!Array.isArray(apiLocations) || apiLocations.length === 0) {
@@ -177,7 +192,7 @@ async function submitForm() {
         telegram: form.value.telegram.trim(),
       },
     })
-    submitSuccess.value = 'Заявка отправлена'
+    submitSuccess.value = successText.value
     resetForm()
   } catch (error) {
     submitError.value = error instanceof Error ? error.message : 'Не удалось отправить заявку'
@@ -222,25 +237,25 @@ onBeforeUnmount(() => {
         <!-- FORM -->
         <div class="rounded-[2rem] border border-black/10 bg-white p-6 shadow-[0_25px_80px_rgba(0,0,0,0.06)] md:p-8">
           <h3 class="text-2xl font-semibold text-[#24231F]">
-            Форма обратной связи
+            {{ formTitle }}
           </h3>
 
           <p class="mt-3 text-sm leading-6 text-stone-500">
-            Заполните форму, и мы свяжемся с вами в ближайшее время.
+            {{ formDescription }}
           </p>
 
           <form class="mt-7 space-y-4" @submit.prevent="submitForm">
             <input
               v-model="form.name"
               type="text"
-              placeholder="ФИО"
+              :placeholder="namePlaceholder"
               class="w-full rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449]/60"
             >
 
             <input
               v-model="form.phone"
               type="tel"
-              placeholder="Телефон *"
+              :placeholder="phonePlaceholder"
               required
               class="w-full rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449]/60"
             >
@@ -248,14 +263,14 @@ onBeforeUnmount(() => {
             <input
               v-model="form.telegram"
               type="text"
-              placeholder="Telegram"
+              :placeholder="telegramPlaceholder"
               class="w-full rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449]/60"
             >
 
             <textarea
               v-model="form.message"
               rows="5"
-              placeholder="Дата, количество участников, пожелания"
+              :placeholder="messagePlaceholder"
               class="w-full resize-none rounded-2xl border border-black/10 bg-white px-5 py-4 text-[#24231F] outline-none transition placeholder:text-stone-500 focus:border-[#8B7449]/60"
             />
 
@@ -267,7 +282,7 @@ onBeforeUnmount(() => {
                 class="mt-1 h-4 w-4 rounded border-black/20 accent-[#8B7449]"
               >
               <span>
-                Нажимая кнопку «Отправить», я соглашаюсь на обработку персональных данных.
+                {{ consentText }}
               </span>
             </label>
 
@@ -276,7 +291,7 @@ onBeforeUnmount(() => {
               :disabled="isSending"
               class="w-full rounded-full border border-black/20 px-6 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#24231F] transition duration-300 hover:-translate-y-1 hover:bg-[#24231F] hover:text-white hover:shadow-lg"
             >
-              {{ isSending ? 'Отправляем...' : 'Отправить' }}
+              {{ isSending ? sendingText : submitText }}
             </button>
             <p v-if="submitSuccess" class="text-sm text-emerald-700">{{ submitSuccess }}</p>
             <p v-if="submitError" class="text-sm text-rose-700">{{ submitError }}</p>
@@ -287,23 +302,23 @@ onBeforeUnmount(() => {
         <div class="overflow-hidden rounded-[2rem] border border-black/10 bg-white shadow-[0_25px_80px_rgba(0,0,0,0.06)]">
           <div class="p-6 md:p-8">
             <h3 class="text-2xl font-semibold text-[#24231F]">
-              Где проходит практика
+              {{ locationTitle }}
             </h3>
 
             <div class="mt-5 space-y-3 text-stone-600">
               <p>
-                <span class="text-black/40">Адрес:</span><br>
+                <span class="text-black/40">{{ addressLabel }}</span><br>
                 {{ sectionAddress }}
               </p>
 
               <p>
-                <span class="text-black/40">Телефон / Telegram:</span><br>
-                {{ sectionPhone }} В· {{ sectionTelegram }}
+                <span class="text-black/40">{{ contactsLabel }}</span><br>
+                {{ sectionPhone }} · {{ sectionTelegram }}
               </p>
 
               <p>
-                <span class="text-black/40">Формат:</span><br>
-                индивидуально, парами или в группе
+                <span class="text-black/40">{{ formatLabel }}</span><br>
+                {{ formatText }}
               </p>
             </div>
 

@@ -79,9 +79,9 @@ const serviceGroups = computed(() => {
   }
 
   const mappedTabs = tabs
-    .filter((tab) => tab && tab.key && tab.label)
-    .map((tab) => ({
-      id: tab.key,
+    .filter((tab) => tab && tab.label)
+    .map((tab, tabIndex) => ({
+      id: tab.key || (String(tab.label).toLowerCase().includes('медитац') ? 'meditations' : `direction-${tabIndex + 1}`),
       label: tab.label,
       intro: tab.intro || sectionDescription.value,
       items: (Array.isArray(tab.cards) ? tab.cards : []).map((card, index) => ({
@@ -344,6 +344,7 @@ onBeforeUnmount(() => {
     <ServiceOrderModal
       :service="selectedService"
       :service-type="selectedServiceType"
+      :content="sectionContent"
       @close="closeOrderModal"
     />
   </section>

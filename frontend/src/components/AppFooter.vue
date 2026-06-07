@@ -16,7 +16,7 @@ const props = defineProps({
   },
 })
 
-const navLinks = [
+const fallbackNavLinks = [
   { label: 'Простыми словами', target: 'simple-words' },
   { label: 'Проводник Лилы', target: 'guide' },
   { label: 'Отзывы', target: 'reviews' },
@@ -30,9 +30,22 @@ const fallbackContactLinks = [
 ]
 
 const footerContent = computed(() => props.section?.content || {})
+const navLinks = computed(() => {
+  const links = footerContent.value.navigation_links
+  if (!Array.isArray(links) || links.length === 0) return fallbackNavLinks
+  return links
+    .filter((link) => link?.label && link?.href)
+    .map((link) => ({
+      label: link.label,
+      target: String(link.href).replace(/^#/, ''),
+    }))
+})
 const footerText = computed(
   () => footerContent.value.text || 'Игра Лила в Москве — путь к ясности через честный диалог с собой.',
 )
+const copyrightText = computed(() => footerContent.value.copyright || '© 2026 Все права защищены.')
+const navigationTitle = computed(() => footerContent.value.navigation_title || 'Навигация')
+const contactsTitle = computed(() => footerContent.value.contacts_title || 'Контакты')
 const contactLinks = computed(() => {
   const links = footerContent.value.links
   if (!Array.isArray(links) || links.length === 0) {
@@ -45,7 +58,7 @@ const contactLinks = computed(() => {
     targetMode: link.target || '_self',
   }))
 })
-const footerBrand = computed(() => (props.site?.name || 'ЛИЛА МОСКВА').toUpperCase())
+const footerBrand = computed(() => (footerContent.value.brand || props.site?.name || 'ЛИЛА МОСКВА').toUpperCase())
 
 const modelUrl = '/models/dice.glb'
 
@@ -231,14 +244,14 @@ onBeforeUnmount(() => {
           </RouterLink>
 
           <p class="text-sm leading-6 text-white/70">
-            © 2025 All rights reserved.
+            {{ copyrightText }}
           </p>
         </div>
 
         <!-- Navigation -->
         <div class="md:justify-self-center">
           <h2 class="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-white/70">
-            Навигация
+            {{ navigationTitle }}
           </h2>
 
           <nav class="flex flex-col gap-2.5 text-sm text-white/70">
@@ -257,7 +270,7 @@ onBeforeUnmount(() => {
         <!-- Contacts -->
        <div class="md:justify-self-end">
           <h2 class="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-white/70">
-            Контакты
+            {{ contactsTitle }}
           </h2>
 
           <nav class="flex flex-col gap-2.5 text-sm text-white/70">

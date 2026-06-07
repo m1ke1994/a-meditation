@@ -10,129 +10,89 @@ const props = defineProps({
 
 const sectionRef = ref(null)
 const isVisible = ref(false)
-
-const counters = ref({
-  percent: 0,
-  games: 0,
-})
-
 const sectionContent = computed(() => props.section?.content || {})
 const imageUrl = computed(() => sectionContent.value.image || '/images/2025-02-26 12-35-42.JPG')
+const imageAlt = computed(() => sectionContent.value.image_alt || 'Проводник игры Лила Ольга Бердникова')
 const guideTag = computed(() => sectionContent.value.tag || 'Проводник игры Лила')
 const guideTitle = computed(() => sectionContent.value.subtitle || 'Ольга Бердникова')
+const guideBrand = computed(() => sectionContent.value.brand || 'Leelabird')
 const guideCaption = computed(() => sectionContent.value.description || 'Практик осознанности, медитации и Игры Лила')
 
-const metrics = [
-  {
-    id: 'percent',
-    target: 100,
-    suffix: '%',
-    label: 'экологичное ведение',
-    icon: 'M12 3.5c4.1 2.9 6.5 6.2 6.5 9.8a6.5 6.5 0 0 1-13 0c0-3.6 2.4-6.9 6.5-9.8Z M9.2 13.1l1.8 1.8 3.9-4.7',
-  },
-  {
-    id: 'games',
-    target: 2000,
-    suffix: '+',
-    label: 'проведённых игр',
-    icon: 'M7 6.8h10 M7 11.8h10 M7 16.8h6 M5.5 3.5h13a1 1 0 0 1 1 1v15l-3-2-3 2-3-2-3 2-3-2-3 2v-15a1 1 0 0 1 1-1Z',
-  },
-  {
-    id: 'soft',
-    value: 'мягко',
-    label: 'без давления',
-    icon: 'M12 20c4.5-2.6 7-5.5 7-9.2A4.1 4.1 0 0 0 12 7a4.1 4.1 0 0 0-7 3.8C5 14.5 7.5 17.4 12 20Z',
-  },
-  {
-    id: 'clear',
-    value: 'ясно',
-    label: 'простым языком',
-    icon: 'M12 3.5v2.2 M12 18.3v2.2 M5.7 5.7l1.5 1.5 M16.8 16.8l1.5 1.5 M3.5 12h2.2 M18.3 12h2.2 M5.7 18.3l1.5-1.5 M16.8 7.2l1.5-1.5 M8.5 12a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0Z',
-  },
+const metricIcons = [
+  'M12 3.5c4.1 2.9 6.5 6.2 6.5 9.8a6.5 6.5 0 0 1-13 0c0-3.6 2.4-6.9 6.5-9.8Z M9.2 13.1l1.8 1.8 3.9-4.7',
+  'M7 6.8h10 M7 11.8h10 M7 16.8h6 M5.5 3.5h13a1 1 0 0 1 1 1v15l-3-2-3 2-3-2-3 2-3-2-3 2v-15a1 1 0 0 1 1-1Z',
+  'M12 20c4.5-2.6 7-5.5 7-9.2A4.1 4.1 0 0 0 12 7a4.1 4.1 0 0 0-7 3.8C5 14.5 7.5 17.4 12 20Z',
+  'M12 3.5v2.2 M12 18.3v2.2 M5.7 5.7l1.5 1.5 M16.8 16.8l1.5 1.5 M3.5 12h2.2 M18.3 12h2.2 M5.7 18.3l1.5-1.5 M16.8 7.2l1.5-1.5 M8.5 12a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0Z',
 ]
-
-const introParagraphs = [
-  'Пройдя глубокий опыт випассаны - специального ретрита, проведенного в полном молчании, аскетизме и медитациях в 2022 году на День Рождения в подарок получила участие в Игре Лила.',
-  'После игры во мне произошла сильная трансформация. События, отыгранные на поле разворачивались 4 месяца, меняя вектор моей жизни. Уходило лишнее, приходило нужное.',
-  'Но самое главное - произошло узнавание себя, как Проводника Лилы.',
+const fallbackMetrics = [
+  { value: '100%', label: 'экологичное ведение' },
+  { value: '2000+', label: 'проведённых игр' },
+  { value: 'мягко', label: 'без давления' },
+  { value: 'ясно', label: 'простым языком' },
 ]
-
-const expandedParagraphs = [
-  'Я прошла обучение в международной школе OMKARA и с тех пор веду Игру на постоянной основе, являюсь Игропрактиком на фестивалях самопознания День Йоги, День Индии, Этно космос и других.',
+const fallbackIntroParagraphs = [
+  'Пройдя глубокий опыт випассаны — специального ретрита, проведенного в полном молчании, аскетизме и медитациях, в 2022 году на день рождения в подарок получила участие в Игре Лила.',
+  'После игры во мне произошла сильная трансформация. События, отыгранные на поле, разворачивались четыре месяца, меняя вектор моей жизни. Уходило лишнее, приходило нужное.',
+  'Но самое главное — произошло узнавание себя как Проводника Лилы.',
 ]
-
-const results = [
+const fallbackExpandedParagraphs = [
+  'Я прошла обучение в международной школе OMKARA и с тех пор веду Игру на постоянной основе, являюсь игропрактиком на фестивалях самопознания День Йоги, День Индии, Этно космос и других.',
+]
+const fallbackResults = [
   'Возобновили или с нуля создали доходные проекты по сердцу, в которые до этого не верили',
   'Переехали в место, подходящее для развития и счастливой жизни',
   'Выстроили гармоничные отношения с близкими, сохраняя свои интересы',
   'Научились кайфовать от себя и жизни и похудели на 8 кг без диет и стресса',
 ]
-
-const finalParagraphs = [
+const fallbackFinalParagraphs = [
   'Исповедую идею баланса, ответственного отношения к жизни, сострадания, красоты и здорового юмора.',
-  'Называю себя чутким, но четким проводником: веду очень мягко, без насилия, чувствую поле, но при необходимости крепким словцом верну в реальность - сплошная ваниль трансформации не дает, а ведь игроки приходят ко мне за реальными изменениями.',
-  'Важно! На поле Лилы есть клеточка Дана - Щедрость. Она поднимает игрока по стреле в состояние баланса.',
-  'Играя в Лилу со мной, вы автоматически участвуете в благотворительности: 10% после каждой игры я перевожу на помощь женщинам, в трудной жизненной ситуации, детям или семьям с детьми, а также животным.',
+  'Называю себя чутким, но четким проводником: веду очень мягко, без насилия, чувствую поле, но при необходимости крепким словцом верну в реальность.',
+  'Важно! На поле Лилы есть клеточка Дана — Щедрость. Она поднимает игрока по стреле в состояние баланса.',
+  'Играя в Лилу со мной, вы автоматически участвуете в благотворительности: 10% после каждой игры я перевожу на помощь тем, кому она необходима.',
 ]
 
-const closingText = 'Делая лучше хотя бы одному живому существу, мы оказываем большую помощь себе, и это не может не сказаться на качестве и скорости изменений в вашей жизни после Игры.'
+function textList(value, fallback) {
+  if (!Array.isArray(value) || value.length === 0) return fallback
+  const items = value
+    .map((item) => (typeof item === 'string' ? item : item?.text))
+    .filter(Boolean)
+  return items.length ? items : fallback
+}
+
+const introParagraphs = computed(() => textList(sectionContent.value.intro_paragraphs, fallbackIntroParagraphs))
+const expandedParagraphs = computed(() => textList(sectionContent.value.expanded_paragraphs, fallbackExpandedParagraphs))
+const results = computed(() => textList(sectionContent.value.results, fallbackResults))
+const finalParagraphs = computed(() => textList(sectionContent.value.final_paragraphs, fallbackFinalParagraphs))
+const resultsTitle = computed(() => sectionContent.value.results_title || '250+ человек уже прошли со мной свою трансформацию:')
+const closingText = computed(
+  () => sectionContent.value.closing_text || 'Делая лучше хотя бы одному живому существу, мы оказываем большую помощь себе, и это не может не сказаться на качестве и скорости изменений в вашей жизни после Игры.',
+)
+const metrics = computed(() => {
+  const source = Array.isArray(sectionContent.value.metrics) && sectionContent.value.metrics.length
+    ? sectionContent.value.metrics
+    : fallbackMetrics
+  return source.map((metric, index) => ({
+    id: `metric-${index}`,
+    value: metric.value || '',
+    label: metric.label || '',
+    icon: metricIcons[index % metricIcons.length],
+  }))
+})
+const metricValue = (metric) => metric.value
 
 let observer
-let animationFrameId = 0
-let hasAnimatedCounters = false
-
-const easeOutCubic = (value) => 1 - Math.pow(1 - value, 3)
-
-const animateCounters = () => {
-  if (hasAnimatedCounters) return
-
-  hasAnimatedCounters = true
-  const duration = 1400
-  const startTime = performance.now()
-
-  const tick = (time) => {
-    const progress = Math.min((time - startTime) / duration, 1)
-    const easedProgress = easeOutCubic(progress)
-
-    counters.value = {
-      percent: Math.round(100 * easedProgress),
-      games: Math.round(2000 * easedProgress),
-    }
-
-    if (progress < 1) {
-      animationFrameId = window.requestAnimationFrame(tick)
-      return
-    }
-
-    counters.value = {
-      percent: 100,
-      games: 2000,
-    }
-  }
-
-  animationFrameId = window.requestAnimationFrame(tick)
-}
-
-const metricValue = (metric) => {
-  if (metric.value) return metric.value
-  return `${counters.value[metric.id]}${metric.suffix}`
-}
 
 onMounted(() => {
   if (!sectionRef.value) return
-
   if (!('IntersectionObserver' in window)) {
     isVisible.value = true
-    animateCounters()
     return
   }
 
   observer = new IntersectionObserver(
     ([entry]) => {
       if (!entry.isIntersecting) return
-
       isVisible.value = true
-      animateCounters()
       observer?.disconnect()
     },
     {
@@ -140,16 +100,11 @@ onMounted(() => {
       threshold: 0.16,
     },
   )
-
   observer.observe(sectionRef.value)
 })
 
 onBeforeUnmount(() => {
   observer?.disconnect()
-
-  if (animationFrameId) {
-    window.cancelAnimationFrame(animationFrameId)
-  }
 })
 </script>
 
@@ -170,7 +125,7 @@ onBeforeUnmount(() => {
 
         <h2 class="text-3xl font-semibold leading-[1.04] tracking-[-0.04em] text-[#24231F] sm:text-4xl md:text-5xl">
           {{ guideTitle }}
-          <span class="block text-[#8B7449]">Leelabird</span>
+          <span class="block text-[#8B7449]">{{ guideBrand }}</span>
         </h2>
       </div>
 
@@ -182,7 +137,7 @@ onBeforeUnmount(() => {
           <div class="relative h-full overflow-hidden rounded-[1.35rem]">
             <img
               :src="imageUrl"
-              alt="Проводник игры Лила Ольга Бердникова"
+              :alt="imageAlt"
               class="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.03]"
             >
 
@@ -190,7 +145,7 @@ onBeforeUnmount(() => {
 
             <div class="absolute bottom-4 left-4 right-4 rounded-2xl border border-white/20 bg-white/18 p-4 text-white shadow-2xl backdrop-blur-xl">
               <p class="text-[11px] uppercase tracking-[0.24em] text-white/70">
-                Leelabird
+                {{ guideBrand }}
               </p>
 
               <p class="mt-2 text-lg font-semibold leading-tight sm:text-xl">
@@ -225,7 +180,7 @@ onBeforeUnmount(() => {
 
             <div class="my-6 rounded-[1.35rem] border border-[#8B7449]/50 bg-[#FBF7EF] p-5">
               <p class="text-[12px] font-medium uppercase tracking-[0.18em] text-[#8B7449]">
-                250+ человек уже прошли со мной свою трансформацию:
+                {{ resultsTitle }}
               </p>
 
               <ul class="mt-4 grid gap-2.5">
