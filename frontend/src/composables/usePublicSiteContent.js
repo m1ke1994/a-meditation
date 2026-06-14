@@ -1,22 +1,18 @@
 import { computed, onMounted, ref } from 'vue'
 
-const defaultApiBaseUrl = 'http://localhost:8000'
-const defaultSiteSlug = 'a-meditation'
-
-const normalizeBaseUrl = (value) => String(value || defaultApiBaseUrl).replace(/\/+$/, '')
+import { buildApiUrl, buildBackendUrl, siteSlug } from '../config/api'
 
 const mediaKeyPattern = /(image|video|avatar|poster|photo|src|file)$/i
 
-function absolutizeMediaValue(value, apiBaseUrl) {
+function absolutizeMediaValue(value) {
   if (typeof value !== 'string') return value
-  if (value.startsWith('http://') || value.startsWith('https://')) return value
-  if (value.startsWith('/media/')) return `${apiBaseUrl}${value}`
+  if (value.startsWith('/media/')) return buildBackendUrl(value)
   return value
 }
 
-function hydrateMediaUrls(payload, apiBaseUrl) {
+function hydrateMediaUrls(payload) {
   if (Array.isArray(payload)) {
-    return payload.map((item) => hydrateMediaUrls(item, apiBaseUrl))
+    return payload.map((item) => hydrateMediaUrls(item))
   }
 
   if (!payload || typeof payload !== 'object') {
@@ -26,12 +22,34 @@ function hydrateMediaUrls(payload, apiBaseUrl) {
   const next = {}
   for (const [key, value] of Object.entries(payload)) {
     if (typeof value === 'string' && mediaKeyPattern.test(key)) {
-      next[key] = absolutizeMediaValue(value, apiBaseUrl)
+      next[key] = absolutizeMediaValue(value)
       continue
     }
-    next[key] = hydrateMediaUrls(value, apiBaseUrl)
+    next[key] = hydrateMediaUrls(value)
   }
   return next
+}
+
+function setMetaDescription(value) {
+  if (!value) return
+
+  let meta = document.head.querySelector('meta[name="description"]')
+  if (!meta) {
+    meta = document.createElement('meta')
+    meta.setAttribute('name', 'description')
+    document.head.appendChild(meta)
+  }
+  meta.setAttribute('content', value)
+}
+
+function applySiteSeo(site) {
+  const seo = site?.seo
+  if (!seo || typeof seo !== 'object') return
+
+  if (seo.title) {
+    document.title = seo.title
+  }
+  setMetaDescription(seo.description)
 }
 
 export function usePublicSiteContent() {
@@ -39,9 +57,6 @@ export function usePublicSiteContent() {
   const sections = ref([])
   const loading = ref(false)
   const error = ref('')
-
-  const apiBaseUrl = normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL)
-  const siteSlug = import.meta.env.VITE_SITE_SLUG || defaultSiteSlug
 
   const sectionsByKey = computed(() => {
     const map = {}
@@ -59,7 +74,7 @@ export function usePublicSiteContent() {
     error.value = ''
 
     try {
-      const response = await fetch(`${apiBaseUrl}/api/sites/${siteSlug}/`, {
+      const response = await fetch(buildApiUrl(`sites/${encodeURIComponent(siteSlug)}/`), {
         cache: 'no-store',
       })
       if (!response.ok) {
@@ -68,10 +83,11 @@ export function usePublicSiteContent() {
 
       const payload = await response.json()
       site.value = payload?.site || null
+      applySiteSeo(site.value)
       const rawSections = Array.isArray(payload?.sections) ? payload.sections : []
       sections.value = rawSections.map((section) => ({
         ...section,
-        content: hydrateMediaUrls(section?.content || {}, apiBaseUrl),
+        content: hydrateMediaUrls(section?.content || {}),
       }))
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load site content'

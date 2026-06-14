@@ -1,19 +1,13 @@
-﻿const defaultApiBaseUrl = 'http://localhost:8000'
-const defaultSiteSlug = 'a-meditation'
-
-function normalizeBaseUrl(value) {
-  return String(value || defaultApiBaseUrl).replace(/\/+$/, '')
-}
+import { buildApiUrl, siteSlug } from '../config/api'
 
 export async function submitLead(payload) {
-  const apiBaseUrl = normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL)
   const requestPayload = {
-    site_slug: import.meta.env.VITE_SITE_SLUG || defaultSiteSlug,
+    site_slug: siteSlug,
     source_url: window.location.href,
     ...payload,
   }
 
-  const response = await fetch(`${apiBaseUrl}/api/leads/`, {
+  const response = await fetch(buildApiUrl('leads/'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

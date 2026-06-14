@@ -30,6 +30,8 @@ Thumbs.db
 # Env
 .env
 .env.*
+!.env.example
+!frontend/.env.example
 
 # IDE
 .vscode/
