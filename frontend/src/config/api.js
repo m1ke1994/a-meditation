@@ -1,13 +1,19 @@
-const defaultApiUrl = 'https://tracknode.ru/api'
-const defaultBackendUrl = 'https://tracknode.ru'
 const defaultSiteSlug = 'a-meditation'
 
-function normalizeUrl(value, fallback) {
-  return String(value || fallback).trim().replace(/\/+$/, '')
+function requiredEnv(name, rawValue) {
+  const value = String(rawValue || '').trim()
+  if (!value) {
+    throw new Error(`${name} must be set`)
+  }
+  return value
 }
 
-export const apiUrl = normalizeUrl(import.meta.env.VITE_API_URL, defaultApiUrl)
-export const backendUrl = normalizeUrl(import.meta.env.VITE_BACKEND_URL, defaultBackendUrl)
+function normalizeUrl(value) {
+  return String(value || '').trim().replace(/\/+$/, '')
+}
+
+export const apiUrl = normalizeUrl(requiredEnv('VITE_API_URL', import.meta.env.VITE_API_URL))
+export const backendUrl = normalizeUrl(requiredEnv('VITE_BACKEND_URL', import.meta.env.VITE_BACKEND_URL))
 export const siteSlug = String(import.meta.env.VITE_SITE_SLUG || defaultSiteSlug).trim()
 
 export function buildApiUrl(path) {
