@@ -33,10 +33,28 @@ function hydrateMediaUrls(payload) {
 function setMetaDescription(value) {
   if (!value) return
 
-  let meta = document.head.querySelector('meta[name="description"]')
+  setNamedMeta('description', value)
+}
+
+function setNamedMeta(name, value) {
+  if (!value) return
+
+  let meta = document.head.querySelector(`meta[name="${name}"]`)
   if (!meta) {
     meta = document.createElement('meta')
-    meta.setAttribute('name', 'description')
+    meta.setAttribute('name', name)
+    document.head.appendChild(meta)
+  }
+  meta.setAttribute('content', value)
+}
+
+function setPropertyMeta(property, value) {
+  if (!value) return
+
+  let meta = document.head.querySelector(`meta[property="${property}"]`)
+  if (!meta) {
+    meta = document.createElement('meta')
+    meta.setAttribute('property', property)
     document.head.appendChild(meta)
   }
   meta.setAttribute('content', value)
@@ -48,8 +66,15 @@ function applySiteSeo(site) {
 
   if (seo.title) {
     document.title = seo.title
+    setPropertyMeta('og:title', seo.title)
+    setNamedMeta('twitter:title', seo.title)
   }
+
   setMetaDescription(seo.description)
+  setPropertyMeta('og:description', seo.description)
+  setNamedMeta('twitter:description', seo.description)
+  setPropertyMeta('og:type', 'website')
+  setNamedMeta('twitter:card', 'summary')
 }
 
 export function usePublicSiteContent() {
