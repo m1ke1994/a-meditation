@@ -86,10 +86,13 @@ const locations = computed(() => {
     }))
 })
 
+const sectionRef = ref(null)
 const mapRef = ref(null)
 const mapStatus = ref('loading')
 
 let yandexMap
+let mapObserver
+let hasRequestedMap = false
 
 const loadYandexMaps = () => new Promise((resolve, reject) => {
   if (window.ymaps) {
@@ -160,6 +163,41 @@ const initMap = async () => {
   }
 }
 
+const startMapLoad = () => {
+  if (hasRequestedMap) return
+
+  hasRequestedMap = true
+  initMap()
+}
+
+const observeMapLoad = () => {
+  if (!sectionRef.value) {
+    startMapLoad()
+    return
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    startMapLoad()
+    return
+  }
+
+  mapObserver = new IntersectionObserver(
+    ([entry]) => {
+      if (!entry.isIntersecting) return
+
+      mapObserver?.disconnect()
+      mapObserver = null
+      startMapLoad()
+    },
+    {
+      rootMargin: '480px 0px',
+      threshold: 0.01,
+    },
+  )
+
+  mapObserver.observe(sectionRef.value)
+}
+
 function resetForm() {
   form.value = {
     name: '',
@@ -202,10 +240,11 @@ async function submitForm() {
 }
 
 onMounted(() => {
-  initMap()
+  observeMapLoad()
 })
 
 onBeforeUnmount(() => {
+  mapObserver?.disconnect()
   yandexMap?.destroy()
 })
 </script>
@@ -213,6 +252,7 @@ onBeforeUnmount(() => {
 <template>
   <section
     id="contacts"
+    ref="sectionRef"
     class="scroll-mt-24 bg-[#F8F3EA] px-6 py-16 text-[#24231F] md:px-8 md:py-20"
   >
     <div class="mx-auto max-w-[1200px]">

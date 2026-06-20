@@ -21,6 +21,18 @@ export default defineConfig(({ mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            const normalizedId = id.replace(/\\/g, '/')
+            if (normalizedId.includes('/node_modules/three/')) {
+              return 'three'
+            }
+          },
+        },
+      },
+    },
     server: {
       host: '0.0.0.0',
       port: Number(env.VITE_DEV_SERVER_PORT || 3000),

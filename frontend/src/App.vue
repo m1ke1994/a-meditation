@@ -12,7 +12,7 @@ import AppPrices from './components/AppPrices.vue'
 import ContactSection from './components/ContactSection.vue'
 import { usePublicSiteContent } from './composables/usePublicSiteContent'
 
-const { site, getSection } = usePublicSiteContent()
+const { site, loading, getSection } = usePublicSiteContent()
 
 const headerSection = computed(() => getSection('header'))
 const heroSection = computed(() => getSection('hero'))
@@ -27,7 +27,7 @@ const footerSection = computed(() => getSection('footer'))
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col bg-[#F8F3EA] text-[#24231F]">
+  <div class="flex min-h-screen flex-col bg-[#F8F3EA] text-[#24231F]" :aria-busy="loading">
     <AppHeader :section="headerSection" />
     <main class="flex-1">
       <AppHero :section="heroSection" />

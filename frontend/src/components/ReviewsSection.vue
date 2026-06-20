@@ -191,6 +191,8 @@ onBeforeUnmount(() => {
                 :src="activeReview.avatar"
                 :alt="activeReview.name"
                 class="h-14 w-14 rounded-full object-cover ring-1 ring-black/10 md:h-16 md:w-16"
+                loading="lazy"
+                decoding="async"
               >
 
               <div>

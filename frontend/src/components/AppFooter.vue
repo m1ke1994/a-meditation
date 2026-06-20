@@ -1,9 +1,11 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import * as THREE from 'three'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 const diceContainer = ref(null)
+const canRenderDiceModel = ref(
+  typeof window !== 'undefined' &&
+    window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches,
+)
 
 const props = defineProps({
   section: {
@@ -62,12 +64,46 @@ const footerBrand = computed(() => (footerContent.value.brand || props.site?.nam
 
 const modelUrl = '/models/dice.glb'
 
+let THREE
+let GLTFLoader
 let scene
 let camera
 let renderer
 let diceModel
 let resizeObserver
 let animationFrameId = 0
+let diceMediaQuery
+let diceObserver
+
+const addMediaQueryListener = (query, listener) => {
+  if (!query) return
+  if (typeof query.addEventListener === 'function') {
+    query.addEventListener('change', listener)
+  } else {
+    query.addListener(listener)
+  }
+}
+
+const removeMediaQueryListener = (query, listener) => {
+  if (!query) return
+  if (typeof query.removeEventListener === 'function') {
+    query.removeEventListener('change', listener)
+  } else {
+    query.removeListener(listener)
+  }
+}
+
+const loadThreeRuntime = async () => {
+  if (THREE && GLTFLoader) return
+
+  const [threeModule, gltfLoaderModule] = await Promise.all([
+    import('three'),
+    import('three/examples/jsm/loaders/GLTFLoader.js'),
+  ])
+
+  THREE = threeModule
+  GLTFLoader = gltfLoaderModule.GLTFLoader
+}
 
 function scrollToSection(target) {
   const section = document.getElementById(target)
@@ -133,6 +169,8 @@ const disposeModel = (object) => {
 }
 
 const animate = () => {
+  if (!renderer || !scene || !camera) return
+
   if (diceModel) {
     const time = performance.now() * 0.001
 
@@ -145,8 +183,18 @@ const animate = () => {
   animationFrameId = window.requestAnimationFrame(animate)
 }
 
-const initThree = () => {
-  if (!diceContainer.value) return
+const initThree = async () => {
+  if (!diceContainer.value || !canRenderDiceModel.value || renderer) return
+
+  try {
+    await loadThreeRuntime()
+  } catch (error) {
+    console.warn('Не удалось загрузить Three.js для 3D-кубика', error)
+    canRenderDiceModel.value = false
+    return
+  }
+
+  if (!diceContainer.value || !canRenderDiceModel.value || renderer) return
 
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100)
@@ -190,22 +238,23 @@ const initThree = () => {
   animate()
 }
 
-onMounted(initThree)
-
-onBeforeUnmount(() => {
+const cleanupThree = () => {
   window.removeEventListener('resize', resizeRenderer)
 
   if (animationFrameId) {
     window.cancelAnimationFrame(animationFrameId)
+    animationFrameId = 0
   }
 
   if (resizeObserver) {
     resizeObserver.disconnect()
+    resizeObserver = null
   }
 
-  if (diceModel) {
+  if (diceModel && scene) {
     disposeModel(diceModel)
     scene.remove(diceModel)
+    diceModel = null
   }
 
   if (renderer) {
@@ -216,6 +265,62 @@ onBeforeUnmount(() => {
       renderer.domElement.parentNode.removeChild(renderer.domElement)
     }
   }
+
+  renderer = null
+  camera = null
+  scene = null
+}
+
+const observeDiceContainer = () => {
+  if (!diceContainer.value || !canRenderDiceModel.value || renderer) return
+
+  if (!('IntersectionObserver' in window)) {
+    initThree()
+    return
+  }
+
+  diceObserver?.disconnect()
+  diceObserver = new IntersectionObserver(
+    ([entry]) => {
+      if (!entry.isIntersecting) return
+
+      diceObserver?.disconnect()
+      diceObserver = null
+      initThree()
+    },
+    {
+      rootMargin: '420px 0px',
+      threshold: 0.01,
+    },
+  )
+
+  diceObserver.observe(diceContainer.value)
+}
+
+const updateDiceRenderMode = () => {
+  canRenderDiceModel.value = Boolean(diceMediaQuery?.matches)
+
+  if (canRenderDiceModel.value) {
+    observeDiceContainer()
+  } else {
+    diceObserver?.disconnect()
+    diceObserver = null
+    cleanupThree()
+  }
+}
+
+onMounted(() => {
+  diceMediaQuery = window.matchMedia('(min-width: 1024px) and (pointer: fine)')
+  addMediaQueryListener(diceMediaQuery, updateDiceRenderMode)
+  updateDiceRenderMode()
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeRenderer)
+  removeMediaQueryListener(diceMediaQuery, updateDiceRenderMode)
+
+  diceObserver?.disconnect()
+  cleanupThree()
 })
 </script>
 
@@ -238,7 +343,17 @@ onBeforeUnmount(() => {
               class="relative -my-4 flex h-14 w-14 shrink-0 items-center justify-center overflow-visible md:h-16 md:w-16"
               role="img"
               aria-label="3D кубик"
-            />
+            >
+              <img
+                v-if="!canRenderDiceModel"
+                src="/dice.png"
+                alt=""
+                class="h-9 w-9 object-contain opacity-95 md:h-10 md:w-10"
+                loading="lazy"
+                decoding="async"
+                aria-hidden="true"
+              >
+            </span>
 
             <span>{{ footerBrand.split(' ').slice(1).join(' ') || 'МОСКВА' }}</span>
           </RouterLink>

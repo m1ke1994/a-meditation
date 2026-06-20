@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
 
 const props = defineProps({
   section: {
@@ -18,6 +18,7 @@ const defaultHeroPhrases = [
 
 const sectionContent = computed(() => props.section?.content || {})
 const heroPosterUrl = computed(() => sectionContent.value.image || '/images/Lila_Olga_2.2.poster.jpg')
+const mobileHeroPosterUrl = '/images/Lila_Olga_2.2.poster.jpg'
 const heroVideoUrl = computed(() => sectionContent.value.background_video || '/images/Lila_Olga_2.2_compressed.mp4')
 const heroPhrases = computed(() => {
   const phrases = sectionContent.value.phrases
@@ -39,31 +40,51 @@ const heroSecondaryButtonLink = computed(() => sectionContent.value.secondary_bu
 const heroRef = ref(null)
 const videoRef = ref(null)
 const activePhraseIndex = ref(0)
+const useStaticHeroMedia = ref(
+  typeof window !== 'undefined' &&
+    (window.matchMedia('(max-width: 767px)').matches ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches),
+)
+const shouldLoadHeroVideo = ref(false)
 
 let observer
 let phraseInterval
+let mobileHeroMediaQuery
+let reducedMotionMediaQuery
+
+const addMediaQueryListener = (query, listener) => {
+  if (!query) return
+  if (typeof query.addEventListener === 'function') {
+    query.addEventListener('change', listener)
+  } else {
+    query.addListener(listener)
+  }
+}
+
+const removeMediaQueryListener = (query, listener) => {
+  if (!query) return
+  if (typeof query.removeEventListener === 'function') {
+    query.removeEventListener('change', listener)
+  } else {
+    query.removeListener(listener)
+  }
+}
 
 const loadVideo = () => {
-  requestAnimationFrame(() => {
-    videoRef.value?.load()
-    videoRef.value?.play().catch(() => {})
+  if (useStaticHeroMedia.value) return
+
+  shouldLoadHeroVideo.value = true
+
+  nextTick(() => {
+    requestAnimationFrame(() => {
+      videoRef.value?.load()
+      videoRef.value?.play().catch(() => {})
+    })
   })
 }
 
-const scrollToSection = (targetId) => {
-  const normalizedTarget = String(targetId || '').replace(/^#/, '')
-  document.getElementById(normalizedTarget)?.scrollIntoView({
-    behavior: 'smooth',
-    block: 'start',
-  })
-}
-
-onMounted(() => {
-  phraseInterval = window.setInterval(() => {
-    activePhraseIndex.value = (activePhraseIndex.value + 1) % heroPhrases.value.length
-  }, 3800)
-
-  if (!heroRef.value) return
+const startVideoObserver = () => {
+  if (!heroRef.value || useStaticHeroMedia.value || observer) return
 
   if (!('IntersectionObserver' in window)) {
     loadVideo()
@@ -76,6 +97,7 @@ onMounted(() => {
 
       loadVideo()
       observer?.disconnect()
+      observer = null
     },
     {
       rootMargin: '320px 0px',
@@ -84,10 +106,49 @@ onMounted(() => {
   )
 
   observer.observe(heroRef.value)
+}
+
+const updateHeroMediaMode = () => {
+  const shouldUseStaticMedia = Boolean(mobileHeroMediaQuery?.matches || reducedMotionMediaQuery?.matches)
+  useStaticHeroMedia.value = shouldUseStaticMedia
+
+  if (shouldUseStaticMedia) {
+    observer?.disconnect()
+    observer = null
+    videoRef.value?.pause()
+    shouldLoadHeroVideo.value = false
+    return
+  }
+
+  startVideoObserver()
+}
+
+const scrollToSection = (targetId) => {
+  const normalizedTarget = String(targetId || '').replace(/^#/, '')
+  document.getElementById(normalizedTarget)?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  })
+}
+
+onMounted(() => {
+  mobileHeroMediaQuery = window.matchMedia('(max-width: 767px)')
+  reducedMotionMediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+  addMediaQueryListener(mobileHeroMediaQuery, updateHeroMediaMode)
+  addMediaQueryListener(reducedMotionMediaQuery, updateHeroMediaMode)
+  updateHeroMediaMode()
+
+  phraseInterval = window.setInterval(() => {
+    activePhraseIndex.value = (activePhraseIndex.value + 1) % heroPhrases.value.length
+  }, 3800)
+
+  startVideoObserver()
 })
 
 onBeforeUnmount(() => {
   observer?.disconnect()
+  removeMediaQueryListener(mobileHeroMediaQuery, updateHeroMediaMode)
+  removeMediaQueryListener(reducedMotionMediaQuery, updateHeroMediaMode)
 })
 
 onUnmounted(() => {
@@ -102,7 +163,19 @@ onUnmounted(() => {
     ref="heroRef"
     class="relative isolate flex min-h-screen items-center overflow-hidden bg-[#24231F] pt-16 text-white md:pt-[72px]"
   >
+    <img
+      v-if="useStaticHeroMedia"
+      :src="mobileHeroPosterUrl"
+      alt=""
+      class="hero-mobile-poster absolute inset-0 -z-20 h-full w-full object-cover"
+      fetchpriority="high"
+      loading="eager"
+      decoding="async"
+      aria-hidden="true"
+    >
+
     <video
+      v-else
       ref="videoRef"
       class="absolute inset-0 -z-20 h-full w-full object-cover"
       autoplay
@@ -110,11 +183,11 @@ onUnmounted(() => {
       muted
       playsinline
       webkit-playsinline
-      preload="auto"
+      preload="metadata"
       :poster="heroPosterUrl"
       aria-hidden="true"
     >
-      <source :src="heroVideoUrl" type="video/mp4">
+      <source v-if="shouldLoadHeroVideo" :src="heroVideoUrl" type="video/mp4">
     </video>
 
     <div class="absolute inset-0 -z-10 bg-black/10" />
@@ -164,6 +237,10 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.hero-mobile-poster {
+  object-position: 50% 50%;
+}
+
 .hero-phrase-enter-active,
 .hero-phrase-leave-active {
   transition:

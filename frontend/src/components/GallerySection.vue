@@ -119,6 +119,7 @@ onBeforeUnmount(() => {
               :alt="item.alt"
               class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
               loading="lazy"
+              decoding="async"
             >
 
             <div class="absolute inset-0 flex items-center justify-center bg-black/35 px-6 text-center opacity-0 transition duration-300 group-hover:opacity-100">
@@ -163,6 +164,7 @@ onBeforeUnmount(() => {
             :src="selectedMedia.src"
             :alt="selectedMedia.alt"
             class="max-h-[88vh] max-w-[calc(100vw-32px)] rounded-2xl object-contain shadow-[0_30px_120px_rgba(0,0,0,0.55)] sm:max-h-[92vh] sm:max-w-[92vw]"
+            decoding="async"
             @click.stop
           >
         </div>

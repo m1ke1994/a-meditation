@@ -139,6 +139,8 @@ onBeforeUnmount(() => {
               :src="imageUrl"
               :alt="imageAlt"
               class="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.03]"
+              loading="lazy"
+              decoding="async"
             >
 
             <div class="absolute inset-0 bg-black/20" />

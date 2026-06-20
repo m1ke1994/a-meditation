@@ -21,6 +21,7 @@ const fallbackPractices = [
     title: 'Восстановление ресурса',
     text: 'Дыхание, тишина и бережное внимание к себе создают пространство для отдыха, наполнения и внутренней опоры.',
     image: '/images/m2.MP4',
+    poster: '/images/Lila_Olga_2.2.poster.jpg',
     type: 'video',
   },
   {
@@ -40,6 +41,9 @@ const fallbackPractices = [
 ]
 
 const sectionContent = computed(() => props.section?.content || {})
+const useStaticMediaPreviews = ref(
+  typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches,
+)
 const sectionTag = computed(() => sectionContent.value.subtitle || 'Практики тишины')
 const sectionTitle = computed(() => sectionContent.value.title || 'Медитации')
 const sectionDescription = computed(
@@ -65,12 +69,36 @@ const practices = computed(() => {
     title: item.title || 'Практика',
     text: item.text || '',
     image: item.image || '',
+    poster: item.poster || item.image_poster || sectionContent.value.video_poster || '/images/Lila_Olga_2.2.poster.jpg',
     type: item.type === 'video' ? 'video' : 'image',
   }))
 })
 
 const selectedMedia = ref(null)
 let previousBodyOverflow = ''
+let mediaPreviewQuery
+
+const addMediaQueryListener = (query, listener) => {
+  if (!query) return
+  if (typeof query.addEventListener === 'function') {
+    query.addEventListener('change', listener)
+  } else {
+    query.addListener(listener)
+  }
+}
+
+const removeMediaQueryListener = (query, listener) => {
+  if (!query) return
+  if (typeof query.removeEventListener === 'function') {
+    query.removeEventListener('change', listener)
+  } else {
+    query.removeListener(listener)
+  }
+}
+
+const updateMediaPreviewMode = () => {
+  useStaticMediaPreviews.value = Boolean(mediaPreviewQuery?.matches)
+}
 
 const openMedia = (practice) => {
   selectedMedia.value = {
@@ -107,10 +135,14 @@ const goToMeditationsPricing = () => {
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
+  mediaPreviewQuery = window.matchMedia('(max-width: 767px)')
+  addMediaQueryListener(mediaPreviewQuery, updateMediaPreviewMode)
+  updateMediaPreviewMode()
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeydown)
+  removeMediaQueryListener(mediaPreviewQuery, updateMediaPreviewMode)
   document.body.style.overflow = previousBodyOverflow
 })
 </script>
@@ -160,10 +192,12 @@ onBeforeUnmount(() => {
             @click="openMedia(practice)"
           >
             <img
-              v-if="practice.type === 'image'"
-              :src="practice.image"
+              v-if="practice.type === 'image' || useStaticMediaPreviews"
+              :src="practice.type === 'video' ? practice.poster : practice.image"
               :alt="practice.title"
               class="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+              loading="lazy"
+              decoding="async"
             >
 
             <video
@@ -174,6 +208,7 @@ onBeforeUnmount(() => {
               loop
               playsinline
               preload="metadata"
+              :poster="practice.poster"
             >
               <source
                 :src="practice.image"
@@ -242,6 +277,7 @@ onBeforeUnmount(() => {
             :src="selectedMedia.src"
             :alt="selectedMedia.alt"
             class="max-h-[88vh] max-w-[calc(100vw-32px)] rounded-2xl object-contain shadow-[0_30px_120px_rgba(0,0,0,0.55)] sm:max-h-[92vh] sm:max-w-[92vw]"
+            decoding="async"
             @click.stop
           >
 
@@ -254,6 +290,7 @@ onBeforeUnmount(() => {
             muted
             loop
             playsinline
+            preload="metadata"
             @click.stop
           />
         </div>
